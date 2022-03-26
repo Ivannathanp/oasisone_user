@@ -38,7 +38,7 @@ function PaymentMethodScreen({ navigation, route }) {
   const online = require("../icons/OnlinePayment.svg");
   const onlineactive = require("../icons/OnlinePaymentActive.svg");
 
-  const [paymentmethod, setPaymentMethod] = useState(false);
+  const [paymentmethod, setPaymentMethod] = useState(true);
   function handlepaymentmethod() {
     if (paymentmethod) {
       setPaymentMethod(false);
@@ -47,7 +47,7 @@ function PaymentMethodScreen({ navigation, route }) {
     }
   }
 
-  const ovo = require("../icons/Ovo.svg");
+  const ovo = require("../icons/Ovo.png");
   const [ovodropdown, setovoDropDown] = useState(false);
   const [ovonumber, setovoNumber] = useState();
   function handleovodropdown() {
@@ -55,10 +55,12 @@ function PaymentMethodScreen({ navigation, route }) {
       setovoDropDown(false);
     } else {
       setovoDropDown(true);
+      setdanaDropDown(false);
+      setshopeeDropDown(false);
     }
   }
 
-  const dana = require("../icons/Dana.svg");
+  const dana = require("../icons/Dana.png");
   const [danadropdown, setdanaDropDown] = useState(false);
   const [dananumber, setdananumber] = useState();
   function handledanadropdown() {
@@ -66,17 +68,21 @@ function PaymentMethodScreen({ navigation, route }) {
       setdanaDropDown(false);
     } else {
       setdanaDropDown(true);
+      setovoDropDown(false);
+      setshopeeDropDown(false);
     }
   }
 
-  const shoppee = require("../icons/Shoppee.svg");
-  const [shoppeedropdown, setshoppeeDropDown] = useState(false);
-  const [shoppeenumber, setshopeenumber] = useState();
-  function handleshoppeedropdown() {
-    if (shoppeedropdown) {
-      setshoppeeDropDown(false);
+  const shopee = require("../icons/Shopee.png");
+  const [shopeedropdown, setshopeeDropDown] = useState(false);
+  const [shopeenumber, setshopeenumber] = useState();
+  function handleshopeedropdown() {
+    if (shopeedropdown) {
+      setshopeeDropDown(false);
     } else {
-      setshoppeeDropDown(true);
+      setshopeeDropDown(true);
+      setdanaDropDown(false);
+      setovoDropDown(false);
     }
   }
 
@@ -88,6 +94,15 @@ function PaymentMethodScreen({ navigation, route }) {
       setBillNotif(true);
     }
   }
+
+  const [callforbill, setCallForBill] = useState(false);
+  function handlecallforbill() {
+    setCallForBill(true);
+    setBillNotif(true);
+  }
+
+  const paymenticon = require("../icons/OrderPlaced.png");
+  const [paymentsuccess, setPaymentSuccess] = useState(false);
 
   function renderHeader() {
     return (
@@ -115,8 +130,30 @@ function PaymentMethodScreen({ navigation, route }) {
 
         <View style={styles.backgroundoverlay}></View>
         {/*Landing Page*/}
-        <View style={{ flex: 1 }}>
-          <ScrollView
+       
+          
+{paymentsuccess? 
+  <View style={styles.emptycontainer}>
+<View style={styles.centered}>
+        <Image
+                source={paymenticon}
+                style={styles.paymenticon}
+                resizeMode="contain"
+              />
+
+          <Text style={styles.paymentlabel}>Payment Successfully.</Text>
+         
+          <Pressable style={styles.homepagebutton} onPress={() =>
+           navigation.navigate("Home")}>
+           <Text style={styles.buttontext}>Back to Homepage</Text> 
+          </Pressable>
+       
+          </View>
+        
+        
+</View>:
+ <View style={{ flex: 1 }}>
+<ScrollView
             style={{ backgroundColor: "#FFFAF4", paddingBottom: "20%" }}
             showsVerticalScrollIndicator={false}
           >
@@ -128,11 +165,9 @@ function PaymentMethodScreen({ navigation, route }) {
                 <View style={billnotif ? styles.notification : styles.hidden}>
                   <View style={styles.notificationtextcontainer}>
                     <Text style={styles.notificationtext}>
-                      Calling waiter...
+                      Generating Bill...
                     </Text>
-                  </View>
 
-                  <View style={styles.notificationclose}>
                     <Pressable
                       style={styles.notifclosebutton}
                       onPress={handlenotification}
@@ -151,6 +186,7 @@ function PaymentMethodScreen({ navigation, route }) {
                     <Pressable
                       style={styles.cashierbutton}
                       onPress={() => handlepaymentmethod()}
+                      disabled={callforbill ? true : false}
                     >
                       <Image
                         source={paymentmethod ? cashieractive : cashier}
@@ -160,7 +196,7 @@ function PaymentMethodScreen({ navigation, route }) {
                       <Text
                         style={paymentmethod ? styles.active : styles.deactive}
                       >
-                        Pay at Cahier
+                        Pay at Cashier
                       </Text>
                     </Pressable>
                   </View>
@@ -171,6 +207,7 @@ function PaymentMethodScreen({ navigation, route }) {
                     <Pressable
                       style={styles.onlinebutton}
                       onPress={() => handlepaymentmethod()}
+                      disabled={callforbill ? true : false}
                     >
                       <Image
                         source={paymentmethod ? online : onlineactive}
@@ -191,70 +228,266 @@ function PaymentMethodScreen({ navigation, route }) {
                 <View>
                   <Text style={styles.title}>Complete the Payment</Text>
                 </View>
+                {paymentmethod ? (
+                  <View>
+                    <View style={styles.textfullbox}>
+                      <View style={styles.textinnerbox}>
+                        <Text>
+                          Payment at cashier we accept payments via{" "}
+                          <span style={{ fontWeight: 700 }}> cash</span> or by{" "}
+                          <span style={{ fontWeight: 700 }}> card</span> ( Debit
+                          or Credit card ).
+                        </Text>
+                        <Text style={styles.cashiertext}>
+                          To make a payment, press the button below to ask our
+                          staff for a bill, after this you will only be able to
+                          make payments at the cashier
+                        </Text>
+                      </View>
 
-                <View>
-                  <Formik>
-                    <Form>
-                      <View
-                        style={ovodropdown? styles.fullbox : styles.minibox }
-                      >
-                        <View style={styles.boxrow}>
-                          <Image
-                            source={ovo}
-                            style={{ width: 44, height: 20 }}
-                            resizeMode="contain"
-                          />
+                      <View style={{ marginTop: "5%", alignItems: "center" }}>
+                        <Pressable
+                          style={
+                            callforbill
+                              ? styles.cashierpaymentbuttonactive
+                              : styles.cashierpaymentbutton
+                          }
+                          onPress={handlecallforbill}
+                          disabled={callforbill ? true : false}
+                        >
+                          <Text style={styles.buttontext}>{callforbill ? "Waiting for Bills" : "Call for Bill"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <View>
+                    <Formik>
+                      <Form>
+                        <View
+                          style={ovodropdown ? styles.fullbox : styles.minibox}
+                        >
+                          <View style={styles.innerbox}>
+                            <View style={styles.boxrow}>
+                              <Pressable
+                                style={styles.downiconcontainer}
+                                onPress={() => handleovodropdown()}
+                              >
+                                <Image
+                                  source={ovo}
+                                  style={{ width: 44, height: 20 }}
+                                  resizeMode="contain"
+                                />
 
-                          <Text style={styles.paymenttext}>Ovo</Text>
-                          <Pressable style={styles.downiconcontainer} onPress={()=>handleovodropdown()}>
-                          <Entypo
-                            name="chevron-down"
-                            size={24}
-                            color="black"
-                            style={styles.downicon}
-                          /></Pressable>
-                        </View>
+                                <Text style={styles.paymenttext}>Ovo</Text>
 
-                        {ovodropdown ? (
-                          <>
-                          <View>
-                            <Text style={styles.boxparagraph}>
-                              Please enter the phone number registered in Ovo.
-                              Billing will be sent to the phone number you
-                              entered.
-                            </Text>
+                                <Entypo
+                                  name={
+                                    ovodropdown ? "chevron-up" : "chevron-down"
+                                  }
+                                  size={24}
+                                  color="black"
+                                  style={styles.downicon}
+                                />
+                              </Pressable>
+                            </View>
+
+                            {ovodropdown ? (
+                              <>
+                                <View style={styles.boxparagraphcontainer}>
+                                  <Text style={styles.boxparagraph}>
+                                    Please enter the phone number registered in
+                                    Ovo. Billing will be sent to the phone
+                                    number you entered.
+                                  </Text>
+                                </View>
+
+                                <View style={styles.boxrow2}>
+                                  <Ionicons
+                                    name="phone-portrait-sharp"
+                                    size={24}
+                                    color="black"
+                                    style={styles.phoneicon}
+                                  />
+
+                                  <TextField
+                                    name="phonenumber"
+                                    type="text"
+                                    onChange={(e) =>
+                                      setovoNumber(e.target.value)
+                                    }
+                                    placeholder="Phone Number"
+                                  />
+                                </View>
+                                <View
+                                  style={{
+                                    marginBottom: "5%",
+                                    alignItems: "flex-end",
+                                  }}
+                                >
+                                  <Pressable style={styles.paybutton}>
+                                    <Text style={styles.buttonpaytext}>Pay Rp.110,000</Text>
+                                  </Pressable>
+                                </View>
+                              </>
+                            ) : null}
                           </View>
-                        
-
-                        <View style={styles.boxrow2}>
-                          <Ionicons
-                            name="phone-portrait-sharp"
-                            size={24}
-                            color="black"
-                            style={styles.phoneicon}
-                          />
-
-                          <TextField
-                            name="phonenumber"
-                            type="text"
-                            onChange={(e) => setovoNumber(e.target.value)}
-                            placeholder="Phone Number"
-                          />   
                         </View>
-                      <View style={{marginBottom: '3%', width: 364, justifyContent:'flex-end'}}>
-                        <Pressable style={styles.paybutton}>Pay Rp.110,000</Pressable>
-                      </View>
-                        
-                        </>) : null}
-                     
-                      </View>
-                    </Form>
-                  </Formik>
-                </View>
+
+                        <View
+                          style={danadropdown ? styles.fullbox : styles.minibox}
+                        >
+                          <View style={styles.innerbox}>
+                            <View style={styles.boxrow}>
+                              <Pressable
+                                style={styles.downiconcontainer}
+                                onPress={() => handledanadropdown()}
+                              >
+                                <Image
+                                  source={dana}
+                                  style={{ width: 44, height: 20 }}
+                                  resizeMode="contain"
+                                />
+
+                                <Text style={styles.paymenttext}>Dana</Text>
+
+                                <Entypo
+                                  name={
+                                    danadropdown ? "chevron-up" : "chevron-down"
+                                  }
+                                  size={24}
+                                  color="black"
+                                  style={styles.downicon}
+                                />
+                              </Pressable>
+                            </View>
+
+                            {danadropdown ? (
+                              <>
+                                <View style={styles.boxparagraphcontainer}>
+                                  <Text style={styles.boxparagraph}>
+                                    Please enter the phone number registered in
+                                    Ovo. Billing will be sent to the phone
+                                    number you entered.
+                                  </Text>
+                                </View>
+
+                                <View style={styles.boxrow2}>
+                                  <Ionicons
+                                    name="phone-portrait-sharp"
+                                    size={24}
+                                    color="black"
+                                    style={styles.phoneicon}
+                                  />
+
+                                  <TextField
+                                    name="phonenumber"
+                                    type="text"
+                                    onChange={(e) =>
+                                      setdananumber(e.target.value)
+                                    }
+                                    placeholder="Phone Number"
+                                  />
+                                </View>
+                                <View
+                                  style={{
+                                    marginBottom: "5%",
+                                    alignItems: "flex-end",
+                                  }}
+                                >
+                                  <Pressable style={styles.paybutton}>
+                                  <Text style={styles.buttonpaytext}>Pay Rp.110,000</Text>
+                                  </Pressable>
+                                </View>
+                              </>
+                            ) : null}
+                          </View>
+                        </View>
+
+                        <View
+                          style={
+                            shopeedropdown ? styles.fullbox : styles.minibox
+                          }
+                        >
+                          <View style={styles.innerbox}>
+                            <View style={styles.boxrow}>
+                              <Pressable
+                                style={styles.downiconcontainer}
+                                onPress={() => handleshopeedropdown()}
+                              >
+                                <Image
+                                  source={shopee}
+                                  style={{ width: 44, height: 20 }}
+                                  resizeMode="contain"
+                                />
+
+                                <Text style={styles.paymenttext}>Shopee</Text>
+
+                                <Entypo
+                                  name={
+                                    shopeedropdown
+                                      ? "chevron-up"
+                                      : "chevron-down"
+                                  }
+                                  size={24}
+                                  color="black"
+                                  style={styles.downicon}
+                                />
+                              </Pressable>
+                            </View>
+
+                            {shopeedropdown ? (
+                              <>
+                                <View style={styles.boxparagraphcontainer}>
+                                  <Text style={styles.boxparagraph}>
+                                    Please enter the phone number registered in
+                                    Ovo. Billing will be sent to the phone
+                                    number you entered.
+                                  </Text>
+                                </View>
+
+                                <View style={styles.boxrow2}>
+                                  <Ionicons
+                                    name="phone-portrait-sharp"
+                                    size={24}
+                                    color="black"
+                                    style={styles.phoneicon}
+                                  />
+
+                                  <TextField
+                                    name="phonenumber"
+                                    type="text"
+                                    onChange={(e) =>
+                                      setshopeenumber(e.target.value)
+                                    }
+                                    placeholder="Phone Number"
+                                  />
+                                </View>
+                                <View
+                                  style={{
+                                    marginBottom: "5%",
+                                    alignItems: "flex-end",
+                                  }}
+                                >
+                                  <Pressable style={styles.paybutton}>
+                                  <Text style={styles.buttonpaytext}>Pay Rp.110,000</Text>
+                                  </Pressable>
+                                </View>
+                              </>
+                            ) : null}
+                          </View>
+                        </View>
+                      </Form>
+                    </Formik>
+                  </View>
+                )}
               </View>
             </View>
+
+
           </ScrollView>
         </View>
+        }
       </View>
     </View>
   );
@@ -289,7 +522,7 @@ const styles = StyleSheet.create({
   },
   paymentbuttoncontainer: {
     flexDirection: "row",
-    marginTop: "3%",
+    marginTop: "5%",
     marginBottom: "5%",
   },
   cashier: {
@@ -381,15 +614,55 @@ const styles = StyleSheet.create({
     position: "relative",
     marginTop: "2%",
   },
+  textfullbox: {
+    width: 364,
+    marginTop: "3%",
+    backgroundColor: "transparent",
+  },
+  textinnerbox: {
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 300,
+    fontSize: 14,
+    lineHeight: 19,
+    color: "#000",
+  },
+  cashiertext: {
+    marginTop: "5%",
+  },
+  cashierpaymentbutton: {
+    width: 260,
+    height: 42,
+    backgroundColor: "#df3030",
+    borderRadius: 100,
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: 28,
+    color: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cashierpaymentbuttonactive: {
+    width: 260,
+    height: 42,
+    backgroundColor: "#FFE4E5",
+    borderRadius: 100,
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: 28,
+    color: "#df3030",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#df3030",
+  },
   fullbox: {
     width: 364,
     height: 211,
     borderRadius: 15,
-    marginTop:'3%',
+    marginTop: "3%",
     backgroundColor: "#fff",
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
     borderColor: "#DF3030",
     borderWidth: 1,
   },
@@ -398,19 +671,19 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 15,
     backgroundColor: "#fff",
-    marginTop:'3%',
+    marginTop: "3%",
     borderColor: "#c4c4c4",
     borderWidth: 1,
   },
-  boxrow: {
-    flex:1,
-    width:'100%',
-    height:'100%',
-    flexDirection: "row",
-    justifyContent:'flex-start',
+  innerbox: {
+    width: "100%",
+    height: "100%",
     paddingTop: 15,
-    paddingLeft:15,
-    paddingRight:15
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  boxrow: {
+    width: "100%",
   },
   paymenttext: {
     fontFamily: "Nunito Sans, sans-serif",
@@ -418,50 +691,53 @@ const styles = StyleSheet.create({
     fontSize: "16px",
     lineHeight: "22px",
     color: "#46445C",
-    marginLeft:'8%',
+    marginLeft: "8%",
   },
-  downiconcontainer:{
-    marginTop:'-1%',
-    position:'absolute',
-    right:10,
+  downiconcontainer: {
+    width: "100%",
+    flexDirection: "row",
   },
   downicon: {
-
-    position:'absolute',
-    right:10,
-    color: '#df3030'
+    marginTop: "-1%",
+    position: "absolute",
+    right: 5,
+    color: "#df3030",
+  },
+  boxparagraphcontainer: {
+    marginTop: "5%",
+    marginRight: "2%",
   },
   boxparagraph: {
-    paddingLeft:15,
-    paddingRight:15,
     fontFamily: "Nunito Sans, sans-serif",
     fontWeight: 300,
     fontSize: 13,
-    lineHeight: 17,
-    color:'#424242'
+    lineHeight: 18,
+    color: "#424242",
   },
-  boxrow2:{
-flex:1,
-flexDirection:'row',
-alignItems:'center',
-justifyContent:'flex-start',
-
+  boxrow2: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
-  paybutton:{
-width:145,
-height:34,
-backgroundColor:'#df3030',
-borderRadius:100,
-fontFamily: "Nunito Sans, sans-serif",
-fontWeight: 600,
-fontSize: 14,
-lineHeight: 28,
-color:'#fff',
-justifyContent:'center',
-alignItems:'center'
+  paybutton: {
+    width: 145,
+    height: 34,
+    backgroundColor: "#df3030",
+    borderRadius: 100,
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 600,
+    fontSize: 14,
+    lineHeight: 28,
+    color: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: "6%",
   },
   phoneicon: {
-    color:'#838FA6'
+    color: "#838FA6",
+    marginLeft: "2%",
+    marginRight: "2%",
   },
   ordercompletedcontainer: {
     marginTop: "3%",
@@ -513,16 +789,13 @@ alignItems:'center'
   },
 
   notification: {
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "row",
     position: "absolute",
-    zIndex: 2,
-    top: -10,
+    zIndex: 5,
+    top: -8,
     right: 10,
     width: 173,
     height: 42,
-    backgroundColor: "#219D36",
+    backgroundColor: "#df3030",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     borderBottomRightRadius: 0,
@@ -532,23 +805,27 @@ alignItems:'center'
     display: "none",
   },
   notificationtextcontainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  notificationtext: {
+    flex: 2,
     justifyContent: "center",
     alignContent: "center",
     alignItems: "center",
-    marginRight: "5%",
-  },
-  notificationtext: {
     fontFamily: "Nunito Sans, sans-serif",
     fontWeight: 600,
     fontSize: "14px",
     lineHeight: "19px",
     color: "#fff",
+    marginLeft: "5%",
   },
-  notificationclose: {
-    marginTop: "4%",
-    marginLeft: "6%",
+  notifclosebutton: {
+    position: "absolute",
+    top: 5,
+    right: 6,
   },
-  notifclosebutton: {},
   modal: {
     backgroundColor: "#fff",
     minWidth: 374,
@@ -768,4 +1045,56 @@ alignItems:'center'
     lineHeight: 19,
     color: "#e52c32",
   },
+
+
+  emptycontainer: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFAF4",
+    height: ScreenHeight,
+  },
+  centered:{
+      flex:1,
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  paymenticon: {
+    width: 185,
+    height: 185,
+    marginBottom: "10%",
+  },
+  paymentlabel: {
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 700,
+    fontSize: 24,
+    lineHeight: 33,
+    color: "#424242",
+    justifyContent: "center",
+  },
+  homepagebutton:{
+    width: 260,
+    height: 42,
+    backgroundColor: "#df3030",
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop:'5%',
+  },
+  buttontext:{
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: 28,
+    color: "#fff",
+  },
+  buttonpaytext:{
+    fontFamily: "Nunito Sans, sans-serif",
+    fontWeight: 600,
+    fontSize: 14,
+    lineHeight: 28,
+    color: "#fff",
+  }
 });

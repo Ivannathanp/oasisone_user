@@ -68,11 +68,12 @@ export default function App() {
             {headerShown: false}
           }>
             
-          <Stack.Screen name="Home" component={Tabs}/>
+          {/* <Stack.Screen name="Home" component={Tabs}/>
           <Stack.Screen name="Restaurant" component={Restaurant}/>
           <Stack.Screen name="Basket" component={BasketScreen}/>
+          <Stack.Screen name="OrderPlaced" component={OrderPlaced}/> */}
           <Stack.Screen name="CallWaiter" component={CallWaiter}/>
-          <Stack.Screen name="OrderPlaced" component={OrderPlaced}/>
+   
             </Stack.Navigator>
               
           </NavigationContainer>

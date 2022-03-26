@@ -998,7 +998,7 @@ function BasketScreen({ navigation, route }) {
                               </Text>
                             </Pressable>
 
-                            <View style={styles.snumberpeople}>{numberofpeople}&nbsp;Guest</View>
+                            <View style={{flexDirection:'row'}}><Text style={styles.snumberpeople}>{numberofpeople}&nbsp;Guest</Text></View>
                                                        
                             <Pressable
                               style={
@@ -1531,6 +1531,5 @@ const styles = StyleSheet.create({
     fontSize: "14px",
     lineHeight: "19px",
     color: "#424242",
-
   },
 });

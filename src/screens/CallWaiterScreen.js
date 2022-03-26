@@ -31,6 +31,7 @@ import { TextField } from "../form/FormLib";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useOutlineSelectStyles } from "../select/index";
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 
 function CallWaiterScreen({ navigation }) {
   const [tablenumber, setTableNumber] = useState(0);
@@ -359,10 +360,15 @@ function CallWaiterScreen({ navigation }) {
     return (
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.button}
+          style={styles.headerbutton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back" size={19} color="white" style={{marginTop:'-5%'}} />
+          <Ionicons
+            name="chevron-back"
+            size={19}
+            color="white"
+            style={{ marginTop: "-1%" }}
+          />
           <Text style={styles.heading}>Call The Waiter</Text>
         </TouchableOpacity>
       </View>
@@ -387,8 +393,10 @@ function CallWaiterScreen({ navigation }) {
   };
   const iconComponent = (props) => {
     return (
-        <AntDesign name="down" style={styles.selecticon}
-      />
+      <ExpandMoreRoundedIcon
+      className={props.className + " " + outlineSelectClasses.icon}
+    />
+
     );
   };
 
@@ -535,16 +543,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
+  headerbutton: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
+  },
   heading: {
     fontFamily: "Nunito Sans, sans-serif",
     fontWeight: 700,
     fontSize: "16px",
     lineHeight: "22px",
     color: "#fff",
-    justifyContent: "center",
-  },
-  button: {
-    flexDirection: "row",
     justifyContent: "center",
   },
   backgroundcontainer: {

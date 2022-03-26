@@ -19,6 +19,9 @@ export default () => ({
     "&:focus": {
       borderRadius: 100,
       background: "#fff",
+      color: "#424242",
+      border: "0.5px solid #E52C32",
+      boxShadow: "0px 0px 5px rgba(229, 44, 50, 0.25)",
     },
 
     "& > div": {
@@ -57,7 +60,7 @@ icon:{
     padding: "0px 0px",
     background: "#fff !important",
     border: "none",
-
+    
     "& li": {
       display: "flex",
       justifyContent: "center",

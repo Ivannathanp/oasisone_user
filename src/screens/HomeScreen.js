@@ -24,7 +24,6 @@ import SearchBar from "../searchbar/searchbar";
 import Promo from "../Promo/Scrollable";
 import Recommended from "../Recommended/Scrollable";
 import Category from "../categories/Scrollable";
-import Menu from "../menu/Scrollable";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
 import { useNavigation } from "@react-navigation/native";
 import { Feather, Entypo } from "@expo/vector-icons";

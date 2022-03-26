@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
     width: 24,
     color: "#fff",
   },
-  buttontext: {
+  tambahkanbuttontext: {
     fontFamily: "Nunito Sans, sans-serif",
     fontWeight: 600,
     fontSize: "16px",

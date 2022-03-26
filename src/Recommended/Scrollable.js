@@ -376,14 +376,15 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   scrollbutton: {
-    maxWidth: wp("40%"),
+    width:24,
+    height:24,
     justifyContent: "center",
+    alignContent:'center',
     alignItems: "center",
     marginLeft: "auto",
     marginRight: "auto",
-    marginTop: 10,
+    marginTop: 8,
     backgroundColor: "#E52C32",
     borderRadius: 50,
-    padding: 5,
   },
 });

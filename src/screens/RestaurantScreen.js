@@ -252,7 +252,7 @@ function RestaurantScreen({ navigation, route }) {
     );
   }
 
-  const Cart = require("../icons/Cart.svg");
+  const Carticon = require("../icons/Cart.svg");
   const [totalprice, setTotalprice] = useState();
   const [orderItems, setOrderItems] = useState([]);
 
@@ -350,7 +350,7 @@ function RestaurantScreen({ navigation, route }) {
           onPress={()=>handlenotification()}
         >
           <Image
-            source={Cart}
+            source={Carticon}
             style={styles.buttonPhoto}
             resizeMode="contain"
           />

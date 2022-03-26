@@ -421,7 +421,7 @@ function RestaurantScreen({ navigation, route }) {
               <View style={styles.price}>
                 <View>
                   <Text style={styles.h3}>
-                    RP :{" "}
+                    Rp. :{" "}
                     <Text style={styles.h2}>
                       <NumberFormat
                         value={route.params.paramkey.price}

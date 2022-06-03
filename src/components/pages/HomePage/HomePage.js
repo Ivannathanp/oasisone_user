@@ -375,7 +375,7 @@ console.log("tenantRetrieved",tenantRetrieved)
   const [taxChargeValue, setTaxChargeValue] = useState();
   const [serviceChargeValue, setServiceChargeValue] = useState();
   const [textAddress, setTextAddress] = useState();
-
+  const [textLocation, setTextLocation] = useState();
 
   useEffect(() => {
     let mounted = true;
@@ -385,9 +385,9 @@ console.log("tenantRetrieved",tenantRetrieved)
         setProfileName(tenantData[0].name);
         setColor(tenantData[0].profileColor);
         setTextAddress(tenantData[0].address);
+        setTextLocation(tenantData[0].location);
         setTaxChargeValue(tenantData[0].taxCharge);
         setServiceChargeValue(tenantData[0].serviceCharge);
-        console.log("Tenant Data socket is called");
         setProfileImage(tenantData[0].profileImage);
       }
     }
@@ -397,7 +397,7 @@ console.log("tenantRetrieved",tenantRetrieved)
   }, [tenantRetrieved, tenantData]);
 
   return (
-    <div className="scrollcontainer" id="containerElement">
+
       <div className="homepageinnercontainer">
         <div className="homepageuppercontainer">
           <div className="homepagerow">
@@ -413,8 +413,8 @@ console.log("tenantRetrieved",tenantRetrieved)
                   <FontAwesomeIcon
                     icon={faLocationDot}
                     className="locationicon"
-                  />
-                  &nbsp;{textAddress}
+                  /> &nbsp;{textLocation}<br />
+                  {textAddress}
                 </span>
               </div>
 
@@ -436,7 +436,6 @@ console.log("tenantRetrieved",tenantRetrieved)
                           restaurants.map((post, index) => {
                             var numberdayweek = [7, 1, 2, 3, 4, 5, 6];
                             const today = new Date();
-                            // console.log(numberdayweek[today.getDay()]);
 
                             return (
                               <div className="modalinnercontainer">
@@ -504,7 +503,11 @@ console.log("tenantRetrieved",tenantRetrieved)
           </div>
         </div>
 
+        <div className="homepageoverlay"></div>
+        
         <div className="outermaincontainer">
+  
+        <div className="scrollcontainer" id="containerElement">
           <div className="maincontainer">
             <div className="searchbar">
               <FontAwesomeIcon icon={faMagnifyingGlass} className="feather" />
@@ -640,7 +643,7 @@ console.log("tenantRetrieved",tenantRetrieved)
 
                                 
                                 return (
-                                  <div className="rendermenucontainer">
+                                  <div className="homerendermenucontainer">
                                       <div className="menuitem" key={posts.id}>
                           <button
                             className="menuscreenbutton"

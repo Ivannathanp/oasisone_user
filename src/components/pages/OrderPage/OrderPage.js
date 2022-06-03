@@ -12,7 +12,6 @@ import moment from "moment";
 function OrderPage() {
   const history = useHistory();
   const location = useLocation();
-
   const myparam = location.state || {};
   console.log("myparam is", myparam);
   let { tenant_id } = useParams();
@@ -291,6 +290,8 @@ function OrderPage() {
                                 </div>
                               );
                             } else {
+                              const orderDate = new Date(post.order_time);
+
                               return (
                                 <div className="currentorderinnercontainer">
                                   <div
@@ -347,7 +348,9 @@ function OrderPage() {
                                         </div>
                                         <div className="ordertext">
                                           Time :&nbsp;{" "}
-                                          {moment(post.order_time).fromNow()}
+                                          {/* {orderDate.toLocaleTimeString("en-US")} */}
+                                          {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
+                                      
                                         </div>
                                       </div>
                                       {post.order_menu.map((posts, index) => {
@@ -555,9 +558,8 @@ function OrderPage() {
                                             </div>
                                             <div className="ordertext">
                                               Time :&nbsp;
-                                              {moment(
-                                                post.order_time
-                                              ).fromNow()}
+                                              {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
+                                         
                                             </div>
                                           </div>
                                           <div className="cright">
@@ -604,9 +606,7 @@ function OrderPage() {
                                                   </div>
                                                   <div className="ordertext">
                                                     Time :&nbsp;
-                                                    {moment(
-                                                      post.order_time
-                                                    ).fromNow()}
+                                                    {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
                                                   </div>
                                                 </div>
                                                 {post.order_menu.map(

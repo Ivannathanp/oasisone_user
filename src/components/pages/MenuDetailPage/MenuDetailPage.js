@@ -278,15 +278,16 @@ function MenuDetailPage() {
                   localStorage.getItem("allEntries")
                 );
                 if (existingEntries !== null) {
+                  console.log("I am called")
                   var item = existingEntries.find(
                     (item) => item.tenant_id === tenant_id
                   );
                   console.log(item);
                   if (item) {
-                    var noItems = item.order.some(
+                    var noItems = item.order.find(
                       (items) => items.menu_id === posts.id
                     );
-                    if (!noItems) {
+                    // if (!noItems) {
                       console.log(posts.id);
                       if (posts.id != myparam.id && posts.quantity > 5) {
                         var existingEntries = JSON.parse(
@@ -422,7 +423,7 @@ function MenuDetailPage() {
                           </div>
                         );
                       } else return null;
-                    }
+                    // }
                   }
                 }
               });

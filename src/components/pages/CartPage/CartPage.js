@@ -406,9 +406,13 @@ function CartPage() {
       var totalitem = existingSubtotal[0];
     }
 
+    console.log(totalitem)
     if (totalitem) {
+      
       var sumPrice = totalitem.order.reduce((accumulator, object) => {
-        return accumulator + object.order_quantity * object.price;
+        var stin = object.price.replace(/,/g, '')
+        console.log(stin)
+        return accumulator + object.order_quantity * stin;
       }, 0);
       setTotalPrice(sumPrice);
       console.log(sumPrice);
@@ -502,6 +506,7 @@ function CartPage() {
     console.log("menuID is:", v);
     console.log("decrement clicked");
 
+    
     console.log(item);
     if (item) {
       if (item.order.length >= 1) {
@@ -514,6 +519,35 @@ function CartPage() {
           localStorage.setItem("allEntries", JSON.stringify(existingEntries));
 
           if (items.order_quantity <= 0) {
+
+            var existingSubtotal = JSON.parse(
+              localStorage.getItem("subtotal")
+            );
+
+            console.log(existingSubtotal);
+            if (existingSubtotal.length > 1) {
+              var totalitem = existingSubtotal.find(
+                (item) => item.tenant_id === tenant_id
+              );
+            } else if (existingSubtotal.length == 1) {
+              var totalitem = existingSubtotal[0];
+            }
+            
+            var removeTotalIndex = totalitem.order.findIndex(
+              (items) => items.menu_id === v
+            );
+            console.log(removeTotalIndex);
+            if (removeTotalIndex != -1) {
+              console.log("layer 1 is called");
+              totalitem.order.splice(removeTotalIndex, 1);
+   
+
+              localStorage.setItem(
+                "subtotal",
+                JSON.stringify(existingSubtotal)
+              );
+            }
+
             var removeIndex = item.order.findIndex(
               (items) => items.menu_id === v
             );

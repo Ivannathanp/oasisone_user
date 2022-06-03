@@ -1,0 +1,52 @@
+.searchinputformcontainer{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.searchinputform{
+  width: 373px;
+  height: 50px;
+  color: #C4C4C4;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+    background-color: #fff;
+    border-radius: 30px;
+    border: none;
+    padding: 0px 40px;
+    box-sizing: border-box;
+  }
+
+  .searchinputform::placeholder{
+     font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+    color: #C4C4C4;
+  }
+
+  .searchinputform:focus{
+    outline: none  !important;;
+    color: #424242;
+    border: 0.5px solid #E52C32 !important;
+    box-shadow: 0px 0px 5px rgba(229, 44, 50, 0.25) !important;
+  }
+
+  .is-invalid{
+    background-color: #fff;
+    color: #424242;
+  }
+
+  .error{
+    display: flex;
+    justify-content: start;
+     font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: #DF3030;
+  margin-left: 5%;
+  }

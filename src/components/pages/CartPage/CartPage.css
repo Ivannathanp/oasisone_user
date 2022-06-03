@@ -1,0 +1,564 @@
+.backgroundcontainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  margin: 5px 0 35px 0;
+}
+.cartinnercontainer{
+  height: 100%;
+  background-color: #df3030;
+  overflow: hidden;
+}
+.cartrestaurantcontainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 220px);
+  overflow: scroll;
+  background-color: #FFFAF4;
+box-sizing: border-box;
+  }
+  .cartrestaurantcontainer::-webkit-scrollbar{
+  display: none;
+  }
+
+    .cartrendermenucontainer{
+      display: flex;
+  
+      flex-direction: column;
+
+    }
+    .cartmenucontainer{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+align-items: center;
+align-content: center;
+padding-top: 5%;
+padding-bottom: 5%;
+    }
+
+.cartbackgroundoverlay{
+  background-color: #FFFAF4;
+  border-top-left-radius: 35px;
+  border-top-right-radius: 35px;
+  height: 20px;
+  width: 100%;
+  z-index: 4;
+  position: absolute;
+  top: 200px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.form{
+  display: flex;
+  padding-bottom: 20%;
+}
+.formtitle{
+  margin-left: 20px;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.headingr{
+  flex: 0.5px;
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  color: #fff;
+  justify-content: center;
+}
+.headingl{
+  flex: 0.5px;
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  color: #fff;
+  justify-content: center;
+  text-align: right;
+}
+.column{
+  display: flex;
+  width: 90%;
+  flex-direction: row;
+}
+
+.itemPhoto{
+  display: flex;
+  height: 321px;
+}
+.line{
+  width: 90%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  border-bottom: 0.5px solid #fff;
+}
+.recommenPhoto{
+  display: flex;
+  height: 16px;
+  width: 70px;
+  justify-content: center;
+  margin-left: 10px;
+}
+.price{
+  flex-direction: row;
+}
+
+.cartemptyicon{
+  width: 185px;
+  height: 185px;
+  margin-bottom: 10%;
+}
+.emptycart{
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: #424242;
+  justify-content: center;
+}
+.title{
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #424242;
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+.h3{
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #424242;
+  margin-left: 20px;
+}
+.h3t{
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #424242;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+.h2{
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #424242;
+}
+.orderbutton{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  z-index: 2px;
+}
+.orderbuttontext{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #fff;
+  white-space: nowrap;
+}
+.orderbuttontexticon{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  background-color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 30px;
+  font-size: 12px;
+  color: #E52C32;
+}
+.additemcartbutton{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 20px;
+  z-index: 1px;
+  border-radius: 200px;
+  height: 60px;
+  width: 373px;
+  background-color: #E52C32;
+  border: none;
+  margin: auto;
+}
+.buttonPhoto{
+  flex: 0.3px;
+  height: 24px;
+  width: 24px;
+}
+
+
+.menucontainer{
+  margin-bottom: 20px;
+}
+.item{
+  margin-right: -15px;
+  margin-bottom: 15px;
+  align-items: center;
+  border-radius: 15px;
+  background-color: #fff;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.item2{
+  margin-right: -15px;
+  margin-bottom: 15px;
+  align-items: center;
+  border-radius: 15px;
+  background-color: #fff;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-width: 1px;
+  border-color: #df3030;
+}
+.itemPhoto{
+  width: 18px;
+  height: 18px;
+}
+.menubutton{
+  height: 100px;
+}
+.button{
+  background-color: #fff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 10px;
+}
+.text{
+  color: #df3030;
+  font-weight: 600;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+.text2{
+  color: #df3030;
+  font-weight: 600;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+.text3{
+  color: #df3030;
+  font-weight: 600;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.menutext{
+  margin-top: 2px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  font-weight: 600;
+  color: #424242;
+}
+
+
+.button{
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  background-color: #fff;
+  border-radius: 50px;
+}
+.buttonactive{
+  width: 20px;
+  height: 20px;
+  color: #000;
+  background-color: #fff;
+  border-radius: 50px;
+}
+.buttontext{
+  color: #E52C32;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+.disabledbuttontext{
+  color: #C4C4C4;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+.container{
+  display: flex;
+  align-items: center;
+  background-color: #FFFAF4;
+  height: 100vh;
+}
+
+
+.label{
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #424242;
+  margin-left: 5%;
+  margin-bottom: 2%;
+}
+.span{
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #E52C32;
+}
+.selecticon{
+  width: 24px;
+  height: 24px;
+  background-color: #df3030;
+  border-radius: 50px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  margin-top:2%;
+  right: 5%;
+  color: #fff;
+}
+.placeholder{
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #C4C4C4;
+}
+.numberofpeople{
+  display: flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-content:center;
+  align-items:center;
+  width: 193px;
+  height: 50px;
+  background-color: #fff;
+  text-align: center;
+  border-radius: 100px;
+  position: relative;
+}
+.sbuttonL{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  margin-left:5%;
+  width: 20px;
+  height: 20px;
+  background-color: #C4C4C4;
+  border-radius: 50px;
+
+}
+.sbuttonactiveL{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  margin-left:5%;
+  width: 20px;
+  height: 20px;
+  background-color: #df3030;
+  border-radius: 50px;
+
+}
+.sbuttonR{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  margin-right:5%;
+  width: 20px;
+  height: 20px;
+  background-color: #C4C4C4;
+  border-radius: 50px;
+
+}
+.sbuttonactiveR{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  margin-right:5%;
+  width: 20px;
+  height: 20px;
+  background-color: #df3030;
+  border-radius: 50px;
+
+}
+.sbuttontext{
+  color: #fff;
+  font-size: 10px;
+}
+.snumberpeople{
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #424242;
+}
+
+.quantitydesc{
+  display: flex;
+  justify-content: center;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 19px;
+  color: #df3030;
+  margin-top: 2%;
+  margin-right: 3%;
+  position: absolute;
+}
+
+.selecterror{
+  display: flex !important;
+  
+  justify-content: flex-start !important;
+     font-family: "Nunito Sans", sans-serif !important;
+font-weight: 600 !important;
+font-size: 12px !important;
+color: #DF3030 !important;
+margin-left: 10% !important;
+}
+
+.cartrenderheader{
+  width: 100%;
+  white-space: nowrap;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  padding-left: 2%;
+   background-color: #df3030;
+box-sizing: border-box;
+}
+
+.cartheader {
+  width: 100%;
+  white-space: nowrap;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  padding-left: 2%;
+   background-color: #df3030;
+   padding-bottom: 7%;
+   position: absolute;
+   box-sizing: border-box;
+}
+.loading{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 20px;
+  z-index: 1px;
+  border-radius: 200px;
+  height: 60px;
+  width: 373px;
+  border: none;
+  margin: auto;
+}
+.deletemenubutton{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  margin-left:5%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  background-color: transparent;
+}
+.cartnotification {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  position: absolute;
+  z-index: 2px;
+  top:15px;
+  right: 10px;
+  width: 235px;
+  height: 45px;
+  background-color: #FFFAF4;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 15px;
+}
+
+.cartnotificationtext {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #E52C32;
+}
+.cartnotifclosebutton {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid #E52C32;
+  border-radius: 30px;
+  box-shadow: none;
+  color: #E52C32;
+  font-size: 10px;
+  padding: 0;
+}

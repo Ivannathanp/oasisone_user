@@ -1,0 +1,281 @@
+.outercontainer {
+  height: 100vh;
+  position: relative;
+  background-color: #df3030;
+}
+.innercontainer {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: #fffaf4;
+  position: relative;
+}
+.innercontainer::-webkit-scrollbar {
+  display: none;
+}
+.header {
+  width: 100%;
+  white-space: nowrap;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  padding-left: 2%;
+   background-color: #df3030;
+}
+.heading {
+  margin-left: 5%;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: #fff;
+  box-sizing: border-box;
+}
+.backbutton {
+  margin: 15px 0 10px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  outline: none;
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+}
+.menudetailbackgroundcontainer {
+  width: auto;
+  height: 321px;
+  position: relative;
+}
+.menudetailbackground {
+  position: relative;
+  height: 321px;
+}
+.menubackgroundoverlay{
+  background-color: #fffaf4;
+  border-top-left-radius: 35px;
+  border-top-right-radius: 35px;
+  height: 30px;
+  width: 100%;
+  z-index: 2px;
+  position: absolute;
+  bottom: -5px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+.menudetailitemPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit:cover;
+}
+.notification {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  position: absolute;
+  z-index: 2px;
+  top:15px;
+  right: 10px;
+  width: 173px;
+  height: 42px;
+  background-color: #e52c32;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 15px;
+}
+.hidden {
+  display: none;
+}
+.notificationtextcontainer {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-content: center;
+  align-items: center;
+  margin-left: 8%;
+}
+.notificationtext {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #fff;
+}
+.notificationclose {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+}
+.notifclosebutton {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid #fff;
+  border-radius: 30px;
+  box-shadow: none;
+  color: #fff;
+  font-size: 10px;
+  padding: 0;
+}
+.backgroundoverlay {
+  background-color: #fffaf4;
+  border-top-left-radius: 35px;
+  border-top-right-radius: 35px;
+  height: 30px;
+  width: 100%;
+  z-index: 2px;
+  position: absolute;
+  top: 30px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.recommenPhoto {
+  flex: 1px;
+  height: 16px;
+  width: 70px;
+  justify-content: center;
+  margin-left: 10px;
+}
+.title {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 30px;
+  color: #424242;
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+.price {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+}
+.menudetailcontainer {
+  width: 100%;
+  background-color: #fffaf4;
+}
+.uppercontainer {
+  margin-bottom: 5%;
+}
+.lowercontainer {
+  margin-top: 30px;
+  margin-left: 20px;
+  padding-bottom: 25%;
+}
+.heading3 {
+  display: flex;
+  flex-direction: row;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  color: #424242;
+  margin-left: 20px;
+}
+.menudetailincontext {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  color: #424242;
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 2px;
+}
+
+.heading2 {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: #424242;
+}
+
+.buttoncontainer {
+  position: absolute;
+  z-index: 2;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 373px;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  background-color: #e52c32;
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+.disabledbuttoncontainer{
+  position: absolute;
+  z-index: 2;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 373px;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  background-color: #c4c4c4;
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+.badgeContainer{
+  display: flex;
+position: relative;
+margin-right: 3%;
+}
+.badgeNumber{
+  width: 20px;
+  height: 20px;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 22px;
+  color: #e52c32;
+  background-color: #fff;
+  border-radius: 30px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 1;
+}
+.cartbuttonicon {
+
+  height: 24px;
+  width: 24px;
+  color: #fff;
+position: relative;
+z-index: 2;
+}
+.tambahkanbuttontext {
+  display: flex;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: #fff;
+}

@@ -1,0 +1,107 @@
+.waiterinnercontainer{
+  height: 100%;
+  overflow: hidden;
+    justify-content: center;
+    align-content: center;
+      background-color: #df3030;
+}
+.waiterbackgroundcontainer{
+  width: auto;
+  margin-top: 5%;
+  position: relative;
+  z-index: 2;
+}
+.restaurantcontainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+    background-color: #FFFAF4;
+    height: 90vh;
+    position: relative;
+    z-index: 2;
+    top: 60px;
+
+  }
+  .formcontainer{
+    width: 100%;
+    padding-top: 5%;
+  }
+.forminputs{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+    height: 90px;
+    margin-bottom: 3%;
+  }
+.formlabel{
+  display: flex;
+     font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #424242;
+    margin-bottom: 5px;
+    margin-left: 8%;
+  }
+.span{
+     font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #E52C32;
+  }
+.selecticon{
+    width: 24px;
+    height: 24px;
+    background-color: #df3030;
+    border-radius: 50px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    right: 5%;
+    color: #fff;
+  }
+.placeholder{
+     font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    color: #C4C4C4;
+  }
+.waiterbutton{
+  position: absolute;
+  z-index: 2;
+  bottom: 10px;
+  left: 0; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto; 
+  width: 373px;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  background-color: #E52C32;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  }
+.callicon{
+width:24px;
+height:24px;
+font-size:24px;
+color:#fff;
+margin-right: 3%;
+  }
+.callbuttontext{
+     font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 21px;
+    color: #fff;
+    margin-left: 2%
+  }

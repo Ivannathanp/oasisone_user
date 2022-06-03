@@ -1,0 +1,95 @@
+.rendercategorycontainers{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow-x: scroll;
+  }
+
+.rendercategorycontainers::-webkit-scrollbar{
+    display: none;
+}
+.categorylist1{
+padding: 0;
+margin: 0;
+margin-left: 25px;
+margin-right: -15px;
+}
+.categorylist{
+  padding: 0;
+  margin: 0;
+  margin-left: 25px;
+  margin-right: -15px;
+  }
+.categoryitem{
+    display: flex;
+    list-style: none;
+    margin-bottom: 15px;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 15px;
+    background-color: #fff;
+    padding: 0 20px;
+    height: 45px;
+     font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    color: #df3030;
+    border: 0.5px solid #FFF;
+  }
+  
+  .body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .categoryitem1 {
+    display: flex;
+    margin-bottom: 15px;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 15px;
+    background-color: #fff;
+    padding: 0 20px;
+    height: 45px;
+     font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    color: #df3030;
+    border: 0.5px solid #E52C32;
+}
+
+.active1{
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  border-radius: 15px;
+  background-color: #fff;
+   font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  color: #df3030;
+  border: 0.5px solid #fff;
+}
+  .actived {
+    display: flex;
+    margin-bottom: 15px;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 15px;
+    background-color: #fff;
+    margin: 0px;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    color: #df3030;
+    border: 0.5px solid #E52C32;
+}

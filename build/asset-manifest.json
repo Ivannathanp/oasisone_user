@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.e56b362f.css",
+    "main.js": "/static/js/main.1192bd6c.js",
+    "static/media/OrderPlaced.png": "/static/media/OrderPlaced.eb7d6ecf9a9b0cde4e68.png",
+    "static/media/Ovo.png": "/static/media/Ovo.6725fb6a06bd09610fee.png",
+    "static/media/EmptyCart.svg": "/static/media/EmptyCart.e016a803ab33473b8431e0bff183e9fc.svg",
+    "static/media/Shopee.png": "/static/media/Shopee.431aabbaa8f5f4457662.png",
+    "static/media/Dana.png": "/static/media/Dana.cacaaf18d1a55d0290b9.png",
+    "static/media/OfflinePaymentActive.svg": "/static/media/OfflinePaymentActive.98334582e52bc0106c856697e733db62.svg",
+    "static/media/OfflinePayment.svg": "/static/media/OfflinePayment.40e2a861c6c9da8cdfc782f84a5719bb.svg",
+    "static/media/OnlinePayment.svg": "/static/media/OnlinePayment.4f9ece1e56be247376b234542ff5f107.svg",
+    "static/media/OnlinePaymentActive.svg": "/static/media/OnlinePaymentActive.458cb537ad7bda07d7e531dfb4bad7d1.svg",
+    "static/media/Cart.svg": "/static/media/Cart.faade7ff1b4d53901bd2c34e154f7dc2.svg",
+    "static/media/Menu.svg": "/static/media/Menu.093a94d7bd718795cd8b216e338c3cdb.svg",
+    "index.html": "/index.html",
+    "main.e56b362f.css.map": "/static/css/main.e56b362f.css.map",
+    "main.1192bd6c.js.map": "/static/js/main.1192bd6c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e56b362f.css",
+    "static/js/main.1192bd6c.js"
+  ]
+}

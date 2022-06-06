@@ -72,7 +72,7 @@ function App() {
     if(tenantID != undefined){
       console.log("I am called", tenantID);
 
-      const newSocket = io("ws://localhost:5000", {
+      const newSocket = io("ws://oasis-one.com:5000", {
         query: {
           tenant_id: tenantID,
         },

@@ -245,7 +245,7 @@ function TransactionPage() {
 
                         <button
                           className="homepagebutton"
-                          onClick={() => history.push("/")}
+                          onClick={() => history.push(`/${tenant_id}`)}
                         >
                           <div className="homepagebuttontext">
                             Back to Homepage

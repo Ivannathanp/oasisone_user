@@ -46,7 +46,7 @@ function App() {
   
 
   useEffect(() => {
-    if (existingEntries !== null) {
+    if (existingEntries != null) {
       if (existingEntries.length > 1) {
         existingEntries.map((item) => {
           if (item.tenant_id === existingEntry.tenant_id) {
@@ -56,7 +56,7 @@ function App() {
             return item.tenant_id;
           }
         });
-      } else if (existingEntries.length === 1) {
+      } else if (existingEntries.length <= 1) {
         setTenantRetrieved(() => true);
         console.log("22222222222222222222222222222222");
         setTenantID(existingEntry.tenant_id);
@@ -69,10 +69,10 @@ function App() {
    
      
     
-    if(tenantRetrieved){
+    if(tenantID != undefined){
       console.log("I am called", tenantID);
 
-      const newSocket = io("ws://oasis-one.com:5000", {
+      const newSocket = io("ws://localhost:5000", {
         query: {
           tenant_id: tenantID,
         },
@@ -88,7 +88,7 @@ function App() {
   useEffect(() => {
     console.log("tennnattttt:", tenantID);
 
-    if (socket && tenantRetrieved) {
+    if (socket && tenantID != undefined) {
       socket.on("visitor enters", (data) => setOnline(data));
       socket.on("visitor exits", (data) => setOnline(data));
       socket.on("roomUsers", ({ room, users }) => {
@@ -113,8 +113,9 @@ function App() {
   return (
     //basename="/oasisone_tenant"
     <Router>
-      <SocketContext.Provider value={socket}>
+     
         <div className="app">
+        <SocketContext.Provider value={socket}>
           <Switch>
             <Route
               path="/:tenant_id/MenuDetail"
@@ -147,8 +148,9 @@ function App() {
               />
             </div>
           </Switch>
+          </SocketContext.Provider>
         </div>
-      </SocketContext.Provider>
+    
     </Router>
   );
 }

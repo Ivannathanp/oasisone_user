@@ -20,14 +20,29 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top: 5%;
   height: calc(100vh - 10px);
-  overflow: scroll;
+  overflow: hidden;
   background-color: #FFFAF4;
 box-sizing: border-box;
   }
 
-  .orderrestaurantcontainer::-webkit-scrollbar{
+  .innerorderrestaurantcontainer{
+    height: 100%;
+    overflow: scroll;
+    padding-bottom: 20%;
+  }
+  .innerorderrestaurantcontainer::-webkit-scrollbar{
     display: none;
+  }
+  .placedemptycontainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(100vh - 100px);
+    background-color: #fffaf4;
+    box-sizing: border-box;
+    overflow: hidden;
   }
   .noneorder{
     display: flex;
@@ -54,7 +69,7 @@ box-sizing: border-box;
     align-content: center;
     align-items: center;
     text-align: center;
-    padding-top: 30%;
+    padding: 40% 0 40% 0;
   }
 .ordernone{
     font-family: "Nunito Sans", sans-serif;

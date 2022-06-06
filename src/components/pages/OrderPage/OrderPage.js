@@ -21,13 +21,17 @@ function OrderPage() {
   const [orderRetrieved, setOrderRetrieved] = useState(false);
   const [status, setStatus] = useState(false);
   const [statusRetrieved, setStatusRetrieved] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(false);
+  const [currentStatusRetrieved, setCurrentStatusRetrieved] = useState(false);
+
   // Get Order Data
   useEffect(() => {
-    let mounted = true;
+  
     console.log("called");
 
-    if (mounted) {
+
       if (tenant_id != undefined) {
+        // setInterval(() => {
         const url = localUrl + "/retrieve/" + tenant_id;
         console.log(url);
 
@@ -46,12 +50,11 @@ function OrderPage() {
               setOrderRetrieved(() => false);
             }
           });
+        // }, [1000]);
       }
-    }
+    
 
-    return () => {
-      mounted = false;
-    };
+    
   }, [orderRetrieved]);
 
   const tenantUrl = process.env.REACT_APP_TENANTURL;
@@ -93,8 +96,9 @@ function OrderPage() {
       socket.on("add order", (data) => handleOrderAdded(data));
       socket.on("update order", (data) => handleOrderUpdated(data));
     }
-  });
+  },[socket]);
 
+  console.log(socket)
   function handleOrderAdded(user) {
     console.log("TABLE1", user);
     console.log(" TABLE original ", orderData);
@@ -177,8 +181,12 @@ function OrderPage() {
 
   var existingOrder = JSON.parse(localStorage.getItem("order"));
   var existingStatus = JSON.parse(localStorage.getItem("status"));
+  var existingCurrentStatus = JSON.parse(localStorage.getItem("currentorder"));
 
   useEffect(() => {
+
+
+ 
     if (existingStatus != null) {
       console.log(existingStatus);
 
@@ -195,11 +203,27 @@ function OrderPage() {
         setStatusRetrieved(true);
       }
     }
-  }, [statusRetrieved]);
 
-  if (statusRetrieved) {
-    console.log("STATUS IS:", status);
-  }
+    if (existingCurrentStatus != null){
+      if( existingCurrentStatus.length > 1){
+        var currentstatus = existingCurrentStatus.find(
+         
+          (item) => item.tenant_id === tenant_id
+        );
+             console.log("current 1")
+      } else if (existingCurrentStatus.length == 1) {
+        console.log("current 2")
+        var currentstatus = existingCurrentStatus[0];
+      }
+
+      if (currentstatus) {
+        console.log("current status")
+        setCurrentStatus(true);
+        setCurrentStatusRetrieved(true);
+      }
+    }
+
+  },[]);
 
   if (existingOrder == null) {
     // no order
@@ -211,7 +235,7 @@ function OrderPage() {
             <div className="backgroundoverlay"></div>
           </div>
 
-          <div className="emptycontainer">
+          <div className="placedemptycontainer">
             <div className="noneorder">
               <div style={{ width: "374px" }}>
                 <div className="ordertitle">Current Order</div>
@@ -247,129 +271,224 @@ function OrderPage() {
           </div>
 
           <div className="orderrestaurantcontainer">
-            <div style={{ height: "100%" }}>
-              {orderRetrieved == true &&
-                orderData.map((item) => {
-                  console.log(item);
-                  return item.map((post, index) => {
-                    console.log(post);
+            <div className="innerorderrestaurantcontainer">
+              <div className="noneorder">
+                <div style={{ width: "374px" }}>
+                  <div className="ordertitle">Current Order</div>
+                </div>
+                {orderRetrieved == true &&
+                  orderData.map((item) => {
+                    console.log(item);
+                    return item.map((post, index) => {
+                      console.log(post);
 
-                    if (existingOrder != null) {
-                      console.log(existingOrder);
+                      if (existingOrder != null) {
+                        console.log(existingOrder);
 
-                      if (existingOrder.length > 1) {
-                        var order = existingOrder.find(
-                          (item) => item.tenant_id === tenant_id
-                        );
-                      } else if (existingOrder.length == 1) {
-                        var order = existingOrder[0];
-                      }
+                        if (existingOrder.length > 1) {
+                          var order = existingOrder.find(
+                            (item) => item.tenant_id === tenant_id
+                          );
+                        } else if (existingOrder.length == 1) {
+                          var order = existingOrder[0];
+                        }
 
-                      if (order && tenantRetrieved) {
-                        console.log(order);
-                        if (order.order.length >= 1) {
-                          if (post.order_status < 4) {
-                            const found = order.order.some(
+                        if (order && tenantRetrieved) {
+                          console.log(order);
+                          if (order.order.length >= 1) {
+                            console.log(".....");
+                            const outerfound = order.order.some(
                               (item) => item.order_id === post.order_id
                             );
-                            console.log("found1", found);
-                            if (!found) {
-                              return (
-                                <div className="noneorder">
-                                  <div style={{ width: "374px" }}>
-                                    <div className="ordertitle">
-                                      Current Order
-                                    </div>
-                                  </div>
-                                  <div className="note">
-                                    <div className="ordernone">
-                                      Looks like you don’t have any Current
-                                      Order status
-                                    </div>
-                                  </div>
-                                </div>
+                            console.log(outerfound + "is "+post.order_id)
+if(outerfound){
+                            if (post.order_status < 4) {
+                              const found = order.order.some(
+                                (item) => item.order_id === post.order_id
                               );
-                            } else {
-                              const orderDate = new Date(post.order_time);
+                              
+                              if( found != undefined){
+                                console.log(found)
+                               if (found) {
+                                var existingCurrentStatus = JSON.parse(localStorage.getItem("currentorder"));
+                         
+                                if(existingCurrentStatus != null){
+                                 if(existingCurrentStatus.length > 1){
+                                  var removeStatus = existingCurrentStatus.findIndex(
+                                    (item) => item.tenant_id === tenant_id
+                                  );
+                                 
+                                 } else {
+                                  var removeStatus = 0;
+                                  
+                      
+                                 }
+                                 console.log(removeStatus)
+                                 existingCurrentStatus.splice(removeStatus, 1);
+                                 localStorage.setItem("currentorder", JSON.stringify(existingCurrentStatus));
+                                }
+                   
+                                // const orderDate = new Date(post.order_time);
+                                const found = order.order.some(
+                                  (item) => item.order_id === post.order_id
+                                );
+                                if (found) {
+                                  var existingCurrentStatus = JSON.parse(
+                                    localStorage.getItem("currentorder")
+                                  );
+                                  console.log("I am splice4");
+                                  if (existingCurrentStatus != null) {
+                                    console.log("I am splice3");
+                                    if (
+                                      existingCurrentStatus.length >= 1 ||
+                                      existingCurrentStatus[0] != null
+                                    ) {
+                                      const foundTenant =
+                                      existingCurrentStatus.findIndex(
+                                          (item) => item.tenant_id === tenant_id
+                                        );
+                                      console.log("I am splice2");
 
-                              return (
-                                <div className="currentorderinnercontainer">
-                                  <div
-                                    style={{
-                                      width: "374px",
-                                      marginTop: "3%",
-                                    }}
-                                  >
-                                    <div className="ordertitle">
-                                      Current Order
-                                    </div>
-                                  </div>
-                                  <div className="currentordercontainer">
-                                    <div style={{ padding: "15px" }}>
-                                      <div className="row1">
-                                        {post.order_status == 1 ? (
-                                          <div className="pending">Pending</div>
-                                        ) : post.order_status == 2 ? (
-                                          <div className="orderplaced">
-                                            Order Placed
-                                          </div>
-                                        ) : post.order_status == 3 ? (
-                                          <div className="served">Served</div>
-                                        ) : post.order_status == 4 ? (
-                                          <div className="payment">Payment</div>
-                                        ) : post.order_status == 5 ? (
-                                          <div className="complete">
-                                            Complete
-                                          </div>
-                                        ) : post.order_status == 6 ? (
-                                          <div className="rejected">
-                                            Rejected
-                                          </div>
-                                        ) : null}
+                                      existingCurrentStatus.splice(foundTenant, 1);
+                                      localStorage.setItem(
+                                        "currentorder",
+                                        JSON.stringify(existingCurrentStatus)
+                                      );
+                                    }
+                                  }
 
-                                        <button
-                                          className="callwaiter"
-                                          onClick={() =>
-                                            history.push({
-                                              pathname: `/${tenant_id}/Waiter`,
-                                              state: post,
-                                            })
-                                          }
-                                        >
-                                          Call The Waiter
-                                        </button>
-                                      </div>
-                                      <div className="row2">
-                                        <div className="orderid">
-                                          {post.order_id}
-                                        </div>
-                                        <div className="ordertext">
-                                          Store :&nbsp;{tenantData[0].name}
-                                        </div>
-                                        <div className="ordertext">
-                                          Time :&nbsp;{" "}
-                                          {/* {orderDate.toLocaleTimeString("en-US")} */}
-                                          {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
-                                      
-                                        </div>
-                                      </div>
-                                      {post.order_menu.map((posts, index) => {
-                                        console.log(posts);
-
-                                        return (
-                                          <div className="row3">
-                                            <div style={{ display: "flex" }}>
-                                              <div className="text1">
-                                                {posts.orderQty}
+                                  if (post.order_status < 4) {
+                                    console.log("I am splice1");
+                                    return (
+                                      <div className="currentordercontainer">
+                                        <div style={{ padding: "15px" }}>
+                                          <div className="row1">
+                                            {post.order_status == 1 ? (
+                                              <div className="pending">
+                                                Pending
                                               </div>
-                                              <div className="text2">
-                                                {posts.name}
+                                            ) : post.order_status == 2 ? (
+                                              <div className="orderplaced">
+                                                Order Placed
                                               </div>
+                                            ) : post.order_status == 3 ? (
+                                              <div className="served">
+                                                Served
+                                              </div>
+                                            ) : post.order_status == 4 ? (
+                                              <div className="payment">
+                                                Payment
+                                              </div>
+                                            ) : post.order_status == 5 ? (
+                                              <div className="complete">
+                                                Complete
+                                              </div>
+                                            ) : post.order_status == 6 ? (
+                                              <div className="rejected">
+                                                Rejected
+                                              </div>
+                                            ) : null}
+
+                                            <button
+                                              className="callwaiter"
+                                              onClick={() =>
+                                                history.push({
+                                                  pathname: `/${tenant_id}/Waiter`,
+                                                  state: post,
+                                                })
+                                              }
+                                            >
+                                              Call The Waiter
+                                            </button>
+                                          </div>
+                                          <div className="row2">
+                                            <div className="orderid">
+                                              {post.order_id}
                                             </div>
-                                            <div className="menurighttext">
+                                            <div className="ordertext">
+                                              Store :&nbsp;{tenantData[0].name}
+                                            </div>
+                                            <div className="ordertext">
+                                              Time :&nbsp;{" "}
+                                              {/* {orderDate.toLocaleTimeString("en-US")} */}
+                                              {moment(post.order_time).format(
+                                                "MMMM Do YYYY, h:mm:ss a"
+                                              )}
+                                            </div>
+                                          </div>
+                                          {post.order_menu.map(
+                                            (posts, index) => {
+                                              console.log(posts);
+
+                                              return (
+                                                <div className="row3">
+                                                  <div
+                                                    style={{ display: "flex" }}
+                                                  >
+                                                    <div className="text1">
+                                                      {posts.orderQty}
+                                                    </div>
+                                                    <div className="text2">
+                                                      {posts.name}
+                                                    </div>
+                                                  </div>
+                                                  <div className="menurighttext">
+                                                    <div className="text3">
+                                                      <NumberFormat
+                                                        value={posts.price}
+                                                        prefix="Rp. "
+                                                        decimalSeparator="."
+                                                        thousandSeparator=","
+                                                        displayType="text"
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              );
+                                            }
+                                          )}
+
+                                          <div className="row4">
+                                            <div className="innerrow">
+                                              <div className="text1">
+                                                Subtotal :
+                                              </div>
                                               <div className="text3">
                                                 <NumberFormat
-                                                  value={posts.price}
+                                                  value={post.order_total}
+                                                  prefix="Rp. "
+                                                  decimalSeparator="."
+                                                  thousandSeparator=","
+                                                  displayType="text"
+                                                />
+                                              </div>
+                                            </div>
+
+                                            <div className="innerrow">
+                                              <div className="text1">
+                                                Tax {tenantData[0].taxCharge}%:
+                                              </div>
+                                              <div className="text3">
+                                                <NumberFormat
+                                                  value={post.order_taxcharge}
+                                                  prefix="Rp. "
+                                                  decimalSeparator="."
+                                                  thousandSeparator=","
+                                                  displayType="text"
+                                                />
+                                              </div>
+                                            </div>
+
+                                            <div className="innerrow">
+                                              <div className="text1">
+                                                Service{" "}
+                                                {tenantData[0].serviceCharge}%:
+                                              </div>
+                                              <div className="text3">
+                                                <NumberFormat
+                                                  value={
+                                                    post.order_servicecharge
+                                                  }
                                                   prefix="Rp. "
                                                   decimalSeparator="."
                                                   thousandSeparator=","
@@ -378,110 +497,112 @@ function OrderPage() {
                                               </div>
                                             </div>
                                           </div>
-                                        );
-                                      })}
+                                          <div className="row5">
+                                            <div className="text1">
+                                              Bill Amount :
+                                            </div>
 
-                                      <div className="row4">
-                                        <div className="innerrow">
-                                          <div className="text1">
-                                            Subtotal :
+                                            <div className="text3">
+                                              <NumberFormat
+                                                value={
+                                                  post.order_total +
+                                                  post.order_taxcharge +
+                                                  post.order_servicecharge
+                                                }
+                                                prefix="Rp. "
+                                                decimalSeparator="."
+                                                thousandSeparator=","
+                                                displayType="text"
+                                              />
+                                            </div>
                                           </div>
-                                          <div className="text3">
-                                            <NumberFormat
-                                              value={post.order_total}
-                                              prefix="Rp. "
-                                              decimalSeparator="."
-                                              thousandSeparator=","
-                                              displayType="text"
-                                            />
-                                          </div>
-                                        </div>
-
-                                        <div className="innerrow">
-                                          <div className="text1">
-                                            Tax {tenantData[0].taxCharge}%:
-                                          </div>
-                                          <div className="text3">
-                                            <NumberFormat
-                                              value={post.order_taxcharge}
-                                              prefix="Rp. "
-                                              decimalSeparator="."
-                                              thousandSeparator=","
-                                              displayType="text"
-                                            />
-                                          </div>
-                                        </div>
-
-                                        <div className="innerrow">
-                                          <div className="text1">
-                                            Service{" "}
-                                            {tenantData[0].serviceCharge}%:
-                                          </div>
-                                          <div className="text3">
-                                            <NumberFormat
-                                              value={post.order_servicecharge}
-                                              prefix="Rp. "
-                                              decimalSeparator="."
-                                              thousandSeparator=","
-                                              displayType="text"
-                                            />
+                                          <div className="paybuttoncontainer">
+                                            <button
+                                              className={
+                                                post.order_status == 1 ||
+                                                post.order_status == 2
+                                                  ? "paymentbutton"
+                                                  : "paymentbuttonactive"
+                                              }
+                                              onClick={() =>
+                                                history.push({
+                                                  pathname: `/${tenant_id}/Payment`,
+                                                  state: post,
+                                                })
+                                              }
+                                              disabled={
+                                                post.order_status == 1 ||
+                                                post.order_status == 2
+                                                  ? true
+                                                  : false
+                                              }
+                                            >
+                                              Payment
+                                            </button>
                                           </div>
                                         </div>
                                       </div>
-                                      <div className="row5">
-                                        <div className="text1">
-                                          Bill Amount :
-                                        </div>
-
-                                        <div className="text3">
-                                          <NumberFormat
-                                            value={
-                                              post.order_total +
-                                              post.order_taxcharge +
-                                              post.order_servicecharge
-                                            }
-                                            prefix="Rp. "
-                                            decimalSeparator="."
-                                            thousandSeparator=","
-                                            displayType="text"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="paybuttoncontainer">
-                                        <button
-                                          className={
-                                            post.order_status == 1 ||
-                                            post.order_status == 2
-                                              ? "paymentbutton"
-                                              : "paymentbuttonactive"
-                                          }
-                                          onClick={() =>
-                                            history.push({
-                                              pathname: `/${tenant_id}/Payment`,
-                                              state: post,
-                                            })
-                                          }
-                                          disabled={
-                                            post.order_status == 1 ||
-                                            post.order_status == 2
-                                              ? true
-                                              : false
-                                          }
-                                        >
-                                          Payment
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>{" "}
-                                </div>
+                                    );
+                                  }
+                                }
+                              }
+                              }
+                            } 
+                          } else if (!outerfound) {
+                         
+                              console.log("I am found");
+                              var existingCurrentStatus = JSON.parse(
+                                localStorage.getItem("currentorder")
                               );
+                              var currentorder = {
+                                tenant_id: tenant_id,
+                                found: 0,
+                              };
+                              if (
+                                existingCurrentStatus == null ||
+                                existingCurrentStatus[0] == null
+                              ) {
+                                existingCurrentStatus = [];
+                                existingCurrentStatus.push(currentorder);
+                                localStorage.setItem(
+                                  "currentorder",
+                                  JSON.stringify(existingCurrentStatus)
+                                );
+                              }
+                              console.log("hello2")
+                              if (existingCurrentStatus != null) {
+                                if (existingCurrentStatus.length >= 1) {
+                                  const foundTenant = existingCurrentStatus.some(
+                                    (item) => item.tenant_id === tenant_id
+                                  );
+                                  console.log("hello1")
+                                  if (!foundTenant) {
+                                    console.log("hello")
+                                    existingCurrentStatus.push(currentorder);
+                                    localStorage.setItem(
+                                      "currentorder",
+                                      JSON.stringify(existingCurrentStatus)
+                                    );
+                                  }
+                                }
+                              }
                             }
+                            
                           }
                         }
                       }
-                    }
-                  });
-                })}
+                    });
+                  })}
+
+                {currentStatus ?  (
+                  <div className="note">
+                    <div className="ordernone">
+                      Looks like you don’t have any Current Order status
+                    </div>
+                  </div>
+                ): null}
+              </div>
+
               <div className="noneorder">
                 <div style={{ width: "374px" }}>
                   <div className="ordertitle">Completed Order</div>
@@ -509,245 +630,246 @@ function OrderPage() {
                             const foundItem = order.order.find(
                               (item) => item.order_id === post.order_id
                             );
-
-                            if (foundItem) {
-                              console.log(post.order_id)
-                              const found = order.order.some(
-                                (item) => item.order_id === post.order_id
-                              );
-                              console.log("found1", found);
-                             if (found) {
-                                var existingStatus = JSON.parse(
-                                  localStorage.getItem("status")
+  
+                            if (foundItem != undefined){
+                              if (foundItem) {
+                                console.log(post.order_id);
+                                const found = order.order.some(
+                                  (item) => item.order_id === post.order_id
                                 );
-                                console.log("I am splice4")
-                                if (existingStatus != null) {
-                                  console.log("I am splice3")
-                                  if (
-                                    existingStatus.length >= 1 &&
-                                    existingStatus[0] != null
-                                  ) {
-                                    const foundTenant =
-                                      existingStatus.findIndex(
-                                        (item) => item.tenant_id === tenant_id
-                                      );
-                                      console.log("I am splice2")
-                                   
-                                   
+                                console.log("found1", found);
+                                if (found) {
+                                  var existingStatus = JSON.parse(
+                                    localStorage.getItem("status")
+                                  );
+                                  console.log("I am splice4");
+                                  if (existingStatus != null) {
+                                    console.log("I am splice3");
+                                    if (
+                                      existingStatus.length >= 1 &&
+                                      existingStatus[0] != null
+                                    ) {
+                                      const foundTenant =
+                                        existingStatus.findIndex(
+                                          (item) => item.tenant_id === tenant_id
+                                        );
+                                      console.log("I am splice2");
+  
                                       existingStatus.splice(foundTenant, 1);
                                       localStorage.setItem(
                                         "status",
                                         JSON.stringify(existingStatus)
                                       );
-                                    
+                                    }
                                   }
-                                }
-
-                                if (post.order_status > 4) {
-                                  console.log("I am splice1")
-                                  return (
-                                    <div className="completedordercontainer">
-                                      <div style={{ padding: "15px" }}>
-                                        <div className="crow1">
-                                          <div className="cleft">
-                                            <div className="corderid">
-                                              {post.order_id}
-                                            </div>
-                                            <div className="ordertext">
-                                              Store :&nbsp;{tenantData[0].name}
-                                            </div>
-                                            <div className="ordertext">
-                                              Time :&nbsp;
-                                              {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
-                                         
-                                            </div>
-                                          </div>
-                                          <div className="cright">
-                                            <button
-                                              className="viewdetail"
-                                              onClick={() =>
-                                                handleopencompleteorder(post)
-                                              }
-                                            >
-                                              View Details
-                                            </button>
-                                          </div>
-
-                                          <Modal open={completeordermodal}>
-                                            <Box className="modal">
-                                              <div
-                                                style={{
-                                                  position: "relative",
-                                                  padding: "15px",
-                                                }}
-                                              >
-                                                <div className="closemodalbuttoncontainer">
-                                                  <button
-                                                    className="closemodalbutton"
-                                                    onClick={() =>
-                                                      handleclosecompleteorder()
-                                                    }
-                                                  >
-                                                    {" "}
-                                                    <FontAwesomeIcon
-                                                      icon={faXmark}
-                                                      className="closeicon"
-                                                    />
-                                                  </button>
-                                                </div>
-
-                                                <div className="row2">
-                                                  <div className="orderid">
-                                                    {post.order_id}
-                                                  </div>
-                                                  <div className="ordertext">
-                                                    Store :&nbsp;
-                                                    {tenantData[0].name}
-                                                  </div>
-                                                  <div className="ordertext">
-                                                    Time :&nbsp;
-                                                    {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
-                                                  </div>
-                                                </div>
-                                                {post.order_menu.map(
-                                                  (posts, index) => (
-                                                    <div className="row3">
-                                                      <div
-                                                        style={{
-                                                          display: "flex",
-                                                        }}
-                                                      >
-                                                        <div className="text1">
-                                                          {post.order_item}
-                                                        </div>
-                                                        <div className="text2">
-                                                          {posts.name}
-                                                        </div>
-                                                      </div>
-                                                      <div className="menurighttext">
-                                                        <div className="text3">
-                                                          <NumberFormat
-                                                            value={posts.price}
-                                                            prefix="Rp. "
-                                                            decimalSeparator="."
-                                                            thousandSeparator=","
-                                                            displayType="text"
-                                                          />
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  )
-                                                )}
-
-                                                <div className="row4">
-                                                  <div className="innerrow">
-                                                    <div className="text1">
-                                                      Subtotal :
-                                                    </div>
-                                                    <div className="text3">
-                                                      <NumberFormat
-                                                        value={post.order_total}
-                                                        prefix="Rp. "
-                                                        decimalSeparator="."
-                                                        thousandSeparator=","
-                                                        displayType="text"
-                                                      />
-                                                    </div>
-                                                  </div>
-
-                                                  <div className="innerrow">
-                                                    <div className="text1">
-                                                      Tax{" "}
-                                                      {tenantData[0].taxCharge}
-                                                      %:
-                                                    </div>
-                                                    <div className="text3">
-                                                      <NumberFormat
-                                                        value={
-                                                          post.order_taxcharge
-                                                        }
-                                                        prefix="Rp. "
-                                                        decimalSeparator="."
-                                                        thousandSeparator=","
-                                                        displayType="text"
-                                                      />
-                                                    </div>
-                                                  </div>
-
-                                                  <div className="innerrow">
-                                                    <div className="text1">
-                                                      Service{" "}
-                                                      {
-                                                        tenantData[0]
-                                                          .serviceCharge
-                                                      }
-                                                      %:
-                                                    </div>
-                                                    <div className="text3">
-                                                      <NumberFormat
-                                                        value={
-                                                          post.order_servicecharge
-                                                        }
-                                                        prefix="Rp. "
-                                                        decimalSeparator="."
-                                                        thousandSeparator=","
-                                                        displayType="text"
-                                                      />
-                                                    </div>
-                                                  </div>
-
-                                                  <div className="row5">
-                                                    <div className="text1">
-                                                      Bill Amount :
-                                                    </div>
-
-                                                    <div className="text3">
-                                                      <NumberFormat
-                                                        value={
-                                                          post.order_total +
-                                                          post.order_taxcharge +
-                                                          post.order_servicecharge
-                                                        }
-                                                        prefix="Rp. "
-                                                        decimalSeparator="."
-                                                        thousandSeparator=","
-                                                        displayType="text"
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                </div>
+  
+                                  if (post.order_status > 4) {
+                                    console.log("I am splice1");
+                                    return (
+                                      <div className="completedordercontainer">
+                                        <div style={{ padding: "15px" }}>
+                                          <div className="crow1">
+                                            <div className="cleft">
+                                              <div className="corderid">
+                                                {post.order_id}
                                               </div>
-                                            </Box>
-                                          </Modal>
-                                        </div>
-                                        <div className="row5">
-                                          <div className="text1">
-                                            Bill Amount :
+                                              <div className="ordertext">
+                                                Store :&nbsp;{tenantData[0].name}
+                                              </div>
+                                              <div className="ordertext">
+                                                Time :&nbsp;
+                                                {moment(post.order_time).format(
+                                                  "MMMM Do YYYY, h:mm:ss a"
+                                                )}
+                                              </div>
+                                            </div>
+                                            <div className="cright">
+                                              <button
+                                                className="viewdetail"
+                                                onClick={() =>
+                                                  handleopencompleteorder(post)
+                                                }
+                                              >
+                                                View Details
+                                              </button>
+                                            </div>
+  
+                                            <Modal open={completeordermodal}>
+                                              <Box className="modal">
+                                                <div
+                                                  style={{
+                                                    position: "relative",
+                                                    padding: "15px",
+                                                  }}
+                                                >
+                                                  <div className="closemodalbuttoncontainer">
+                                                    <button
+                                                      className="closemodalbutton"
+                                                      onClick={() =>
+                                                        handleclosecompleteorder()
+                                                      }
+                                                    >
+                                                      {" "}
+                                                      <FontAwesomeIcon
+                                                        icon={faXmark}
+                                                        className="closeicon"
+                                                      />
+                                                    </button>
+                                                  </div>
+  
+                                                  <div className="row2">
+                                                    <div className="orderid">
+                                                      {post.order_id}
+                                                    </div>
+                                                    <div className="ordertext">
+                                                      Store :&nbsp;
+                                                      {tenantData[0].name}
+                                                    </div>
+                                                    <div className="ordertext">
+                                                      Time :&nbsp;
+                                                      {moment(
+                                                        post.order_time
+                                                      ).format(
+                                                        "MMMM Do YYYY, h:mm:ss a"
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                  {post.order_menu.map(
+                                                    (posts, index) => (
+                                                      <div className="row3">
+                                                        <div
+                                                          style={{
+                                                            display: "flex",
+                                                          }}
+                                                        >
+                                                          <div className="text1">
+                                                            {post.order_item}
+                                                          </div>
+                                                          <div className="text2">
+                                                            {posts.name}
+                                                          </div>
+                                                        </div>
+                                                        <div className="menurighttext">
+                                                          <div className="text3">
+                                                            <NumberFormat
+                                                              value={posts.price}
+                                                              prefix="Rp. "
+                                                              decimalSeparator="."
+                                                              thousandSeparator=","
+                                                              displayType="text"
+                                                            />
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    )
+                                                  )}
+  
+                                                  <div className="row4">
+                                                    <div className="innerrow">
+                                                      <div className="text1">
+                                                        Subtotal :
+                                                      </div>
+                                                      <div className="text3">
+                                                        <NumberFormat
+                                                          value={post.order_total}
+                                                          prefix="Rp. "
+                                                          decimalSeparator="."
+                                                          thousandSeparator=","
+                                                          displayType="text"
+                                                        />
+                                                      </div>
+                                                    </div>
+  
+                                                    <div className="innerrow">
+                                                      <div className="text1">
+                                                        Tax{" "}
+                                                        {tenantData[0].taxCharge}
+                                                        %:
+                                                      </div>
+                                                      <div className="text3">
+                                                        <NumberFormat
+                                                          value={
+                                                            post.order_taxcharge
+                                                          }
+                                                          prefix="Rp. "
+                                                          decimalSeparator="."
+                                                          thousandSeparator=","
+                                                          displayType="text"
+                                                        />
+                                                      </div>
+                                                    </div>
+  
+                                                    <div className="innerrow">
+                                                      <div className="text1">
+                                                        Service{" "}
+                                                        {
+                                                          tenantData[0]
+                                                            .serviceCharge
+                                                        }
+                                                        %:
+                                                      </div>
+                                                      <div className="text3">
+                                                        <NumberFormat
+                                                          value={
+                                                            post.order_servicecharge
+                                                          }
+                                                          prefix="Rp. "
+                                                          decimalSeparator="."
+                                                          thousandSeparator=","
+                                                          displayType="text"
+                                                        />
+                                                      </div>
+                                                    </div>
+  
+                                                    <div className="row5">
+                                                      <div className="text1">
+                                                        Bill Amount :
+                                                      </div>
+  
+                                                      <div className="text3">
+                                                        <NumberFormat
+                                                          value={
+                                                            post.order_total +
+                                                            post.order_taxcharge +
+                                                            post.order_servicecharge
+                                                          }
+                                                          prefix="Rp. "
+                                                          decimalSeparator="."
+                                                          thousandSeparator=","
+                                                          displayType="text"
+                                                        />
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </Box>
+                                            </Modal>
                                           </div>
-
-                                          <div className="text3">
-                                            <NumberFormat
-                                              value={
-                                                post.order_total +
-                                                post.order_taxcharge +
-                                                post.order_servicecharge
-                                              }
-                                              prefix="Rp. "
-                                              decimalSeparator="."
-                                              thousandSeparator=","
-                                              displayType="text"
-                                            />
+                                          <div className="row5">
+                                            <div className="text1">
+                                              Bill Amount :
+                                            </div>
+  
+                                            <div className="text3">
+                                              <NumberFormat
+                                                value={
+                                                  post.order_total +
+                                                  post.order_taxcharge +
+                                                  post.order_servicecharge
+                                                }
+                                                prefix="Rp. "
+                                                decimalSeparator="."
+                                                thousandSeparator=","
+                                                displayType="text"
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  );
+                                    );
+                                  }
                                 }
-                              }
-                            }
-
-                            else if (!foundItem){
-                              
+                              } else if (!foundItem) {
                                 console.log("I am found");
                                 var existingStatus = JSON.parse(
                                   localStorage.getItem("status")
@@ -767,13 +889,13 @@ function OrderPage() {
                                     JSON.stringify(existingStatus)
                                   );
                                 }
-
+  
                                 if (existingStatus != null) {
                                   if (existingStatus.length >= 1) {
                                     const foundTenant = existingStatus.some(
                                       (item) => item.tenant_id === tenant_id
                                     );
-
+  
                                     if (!foundTenant) {
                                       existingStatus.push(status);
                                       localStorage.setItem(
@@ -783,8 +905,9 @@ function OrderPage() {
                                     }
                                   }
                                 }
-                              
+                              }
                             }
+                           
                           }
                         }
                       }

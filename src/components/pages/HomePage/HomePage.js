@@ -402,7 +402,8 @@ console.log("tenantRetrieved",tenantRetrieved)
         <div className="homepageuppercontainer">
           <div className="homepagerow">
             <div className="logocolumn">
-              <img src={profileImage + "?time" + new Date()} className="logoimage" />
+            <img src={profileImage} className="logoimage" />
+              {/* <img src={profileImage + "?time" + new Date()} className="logoimage" /> */}
             </div>
 
             <div className="headercolumn">

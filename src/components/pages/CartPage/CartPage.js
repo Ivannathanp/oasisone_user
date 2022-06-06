@@ -178,6 +178,10 @@ function CartPage() {
 
   }, []);
 
+  useEffect(()=>{
+    
+  })
+
   // socket connection
   const socket = useContext(SocketContext);
 
@@ -185,10 +189,30 @@ function CartPage() {
     if (socket) {
       socket.on('add order', (data) => console.log(data));
       socket.on("update category", (data) => handleCategoryUpdated(data));
+      socket.on('add table', (data)=>handleTableAdded(data));
+      socket.on('delete table', (data)=>handleTableAdded(data));
+      socket.on('remove table', (data)=>handleTableAdded(data));
+      socket.on('duplicate table', (data)=>handleTableAdded(data));
+      socket.on('add waiter call', (data) => handleTableAdded(data));
       console.log("I am socket called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
   });
+  function handleTableAdded(user) {
+    console.log("TABLE1", user);
+    console.log(" TABLE original ", tableData);
 
+    if (tableRetrieved) {
+      console.log("I am table retrieved!!!!!!!!!!!!!", user)
+    
+      let newData = tableData.splice();
+ 
+      newData.push(user);
+      setTableData(newData);
+      console.log("NEW DATA IS!!!!!!!!!: ", newData);
+      console.log("...user is", tableData)
+     
+    }
+  }
   function handleCategoryUpdated(user) {
     console.log("TABLE1", user);
     console.log(" TABLE original ", menuData);
@@ -212,8 +236,31 @@ function CartPage() {
   const [totalTax, setTotalTax] = useState(0);
   const [totalPayment, setTotalPayment] = useState(0);
   const [emptyQuantity, setEmptyQuantity] = useState(false);
+  const [userid, setuserid] = useState();
   var existingEntry = JSON.parse(localStorage.getItem("entry"));
   var existingEntries = JSON.parse(localStorage.getItem("allEntries"));
+
+  useEffect(()=>{
+    var existingUser = JSON.parse(localStorage.getItem("user"));
+
+    console.log("AAAAAAAAAAAAAAAAAAAAAAA layer1", existingUser)
+      if(existingUser == null){
+        console.log("layer1")
+        setuserid("null");
+      } else if (existingUser != null) {
+        console.log("layer2")
+        if(existingUser[0].user_id != null){
+          console.log("item layer 1")
+          setuserid(existingUser[0].user_id)
+        } else if (!item) {
+          console.log("item layer 2")
+          setuserid("null");
+        }
+        
+      }
+    
+   
+  })
 
   // useEffect(() => {
   //   setInterval(() => {
@@ -532,7 +579,7 @@ function CartPage() {
             } else if (existingSubtotal.length == 1) {
               var totalitem = existingSubtotal[0];
             }
-            
+
             var removeTotalIndex = totalitem.order.findIndex(
               (items) => items.menu_id === v
             );
@@ -635,15 +682,18 @@ function CartPage() {
       }, 3000); //wait 5 seconds
     }
   }
+console.log(userid)
 
   async function createOrder(values, setSubmitting) {
+
     var existingEntries = JSON.parse(localStorage.getItem("allEntries"));
     var existingSubtotal = JSON.parse(localStorage.getItem("subtotal"));
-    var item = existingEntries.find((item) => item.tenant_id === tenant_id);
 
-    const url = localUrl + "/create/" + tenant_id;
 
+      const url = localUrl + "/create/" + tenant_id;
+console.log("user id", userid)
     const payload = JSON.stringify({
+      user_id: userid,
       order_table: tablenumber,
       order_menu: item.order,
       order_item: totalQuantity,
@@ -667,7 +717,7 @@ function CartPage() {
         .then((response) => response.json())
         .then((result) => {
           if (result.status === "SUCCESS") {
-            
+            console.log(result.data[0])
             socket.emit("add order", result.data);
             
             var removeOrder = existingEntries.findIndex(
@@ -702,6 +752,17 @@ function CartPage() {
                   );
                
 
+    var existingUser = JSON.parse(localStorage.getItem("user"));
+    var user = {
+      user_id: result.data[0].user_id,
+  };
+
+   
+      existingUser = [];
+      existingUser.push(user);
+      localStorage.setItem("user", JSON.stringify(existingUser));
+   
+
 
 
             history.push({
@@ -719,12 +780,253 @@ function CartPage() {
     }
   }
 
+  // useEffect(()=>{
+
+  //   if(orderRetrieved){
+  //     {orderRetrieved == true &&
+  //       orderData.map((item) => {
+  //         console.log(item);
+  //         return item.map((post, index) => {
+  //           console.log(post);
+
+  //           if (existingOrder != null) {
+  //             console.log(existingOrder);
+
+  //             if (existingOrder.length > 1) {
+  //               var order = existingOrder.find(
+  //                 (item) => item.tenant_id === tenant_id
+  //               );
+  //             } else if (existingOrder.length == 1) {
+  //               var order = existingOrder[0];
+  //             }
+
+  //             if (order && tenantRetrieved) {
+  //               console.log(order);
+  //               if (order.order.length >= 1) {
+  //                 if (post.order_status < 4) {
+  //                   const found = order.order.some(
+  //                     (item) => item.order_id === post.order_id
+  //                   );
+  //                   console.log("found1", found);
+  //                   if (!found) {
+  //                     return (
+  //                       <div className="noneorder">
+  //                         <div style={{ width: "374px" }}>
+  //                           <div className="ordertitle">
+  //                             Current Order
+  //                           </div>
+  //                         </div>
+  //                         <div className="note">
+  //                           <div className="ordernone">
+  //                             Looks like you don’t have any Current
+  //                             Order status
+  //                           </div>
+  //                         </div>
+  //                       </div>
+  //                     );
+  //                   } else {
+  //                     const orderDate = new Date(post.order_time);
+
+  //                     return (
+  //                       <div className="currentorderinnercontainer">
+  //                         <div
+  //                           style={{
+  //                             width: "374px",
+  //                             marginTop: "3%",
+  //                           }}
+  //                         >
+  //                           <div className="ordertitle">
+  //                             Current Order
+  //                           </div>
+  //                         </div>
+  //                         <div className="currentordercontainer">
+  //                           <div style={{ padding: "15px" }}>
+  //                             <div className="row1">
+  //                               {post.order_status == 1 ? (
+  //                                 <div className="pending">Pending</div>
+  //                               ) : post.order_status == 2 ? (
+  //                                 <div className="orderplaced">
+  //                                   Order Placed
+  //                                 </div>
+  //                               ) : post.order_status == 3 ? (
+  //                                 <div className="served">Served</div>
+  //                               ) : post.order_status == 4 ? (
+  //                                 <div className="payment">Payment</div>
+  //                               ) : post.order_status == 5 ? (
+  //                                 <div className="complete">
+  //                                   Complete
+  //                                 </div>
+  //                               ) : post.order_status == 6 ? (
+  //                                 <div className="rejected">
+  //                                   Rejected
+  //                                 </div>
+  //                               ) : null}
+
+  //                               <button
+  //                                 className="callwaiter"
+  //                                 onClick={() =>
+  //                                   history.push({
+  //                                     pathname: `/${tenant_id}/Waiter`,
+  //                                     state: post,
+  //                                   })
+  //                                 }
+  //                               >
+  //                                 Call The Waiter
+  //                               </button>
+  //                             </div>
+  //                             <div className="row2">
+  //                               <div className="orderid">
+  //                                 {post.order_id}
+  //                               </div>
+  //                               <div className="ordertext">
+  //                                 Store :&nbsp;{tenantData[0].name}
+  //                               </div>
+  //                               <div className="ordertext">
+  //                                 Time :&nbsp;{" "}
+  //                                 {/* {orderDate.toLocaleTimeString("en-US")} */}
+  //                                 {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
+                              
+  //                               </div>
+  //                             </div>
+  //                             {post.order_menu.map((posts, index) => {
+  //                               console.log(posts);
+
+  //                               return (
+  //                                 <div className="row3">
+  //                                   <div style={{ display: "flex" }}>
+  //                                     <div className="text1">
+  //                                       {posts.orderQty}
+  //                                     </div>
+  //                                     <div className="text2">
+  //                                       {posts.name}
+  //                                     </div>
+  //                                   </div>
+  //                                   <div className="menurighttext">
+  //                                     <div className="text3">
+  //                                       <NumberFormat
+  //                                         value={posts.price}
+  //                                         prefix="Rp. "
+  //                                         decimalSeparator="."
+  //                                         thousandSeparator=","
+  //                                         displayType="text"
+  //                                       />
+  //                                     </div>
+  //                                   </div>
+  //                                 </div>
+  //                               );
+  //                             })}
+
+  //                             <div className="row4">
+  //                               <div className="innerrow">
+  //                                 <div className="text1">
+  //                                   Subtotal :
+  //                                 </div>
+  //                                 <div className="text3">
+  //                                   <NumberFormat
+  //                                     value={post.order_total}
+  //                                     prefix="Rp. "
+  //                                     decimalSeparator="."
+  //                                     thousandSeparator=","
+  //                                     displayType="text"
+  //                                   />
+  //                                 </div>
+  //                               </div>
+
+  //                               <div className="innerrow">
+  //                                 <div className="text1">
+  //                                   Tax {tenantData[0].taxCharge}%:
+  //                                 </div>
+  //                                 <div className="text3">
+  //                                   <NumberFormat
+  //                                     value={post.order_taxcharge}
+  //                                     prefix="Rp. "
+  //                                     decimalSeparator="."
+  //                                     thousandSeparator=","
+  //                                     displayType="text"
+  //                                   />
+  //                                 </div>
+  //                               </div>
+
+  //                               <div className="innerrow">
+  //                                 <div className="text1">
+  //                                   Service{" "}
+  //                                   {tenantData[0].serviceCharge}%:
+  //                                 </div>
+  //                                 <div className="text3">
+  //                                   <NumberFormat
+  //                                     value={post.order_servicecharge}
+  //                                     prefix="Rp. "
+  //                                     decimalSeparator="."
+  //                                     thousandSeparator=","
+  //                                     displayType="text"
+  //                                   />
+  //                                 </div>
+  //                               </div>
+  //                             </div>
+  //                             <div className="row5">
+  //                               <div className="text1">
+  //                                 Bill Amount :
+  //                               </div>
+
+  //                               <div className="text3">
+  //                                 <NumberFormat
+  //                                   value={
+  //                                     post.order_total +
+  //                                     post.order_taxcharge +
+  //                                     post.order_servicecharge
+  //                                   }
+  //                                   prefix="Rp. "
+  //                                   decimalSeparator="."
+  //                                   thousandSeparator=","
+  //                                   displayType="text"
+  //                                 />
+  //                               </div>
+  //                             </div>
+  //                             <div className="paybuttoncontainer">
+  //                               <button
+  //                                 className={
+  //                                   post.order_status == 1 ||
+  //                                   post.order_status == 2
+  //                                     ? "paymentbutton"
+  //                                     : "paymentbuttonactive"
+  //                                 }
+  //                                 onClick={() =>
+  //                                   history.push({
+  //                                     pathname: `/${tenant_id}/Payment`,
+  //                                     state: post,
+  //                                   })
+  //                                 }
+  //                                 disabled={
+  //                                   post.order_status == 1 ||
+  //                                   post.order_status == 2
+  //                                     ? true
+  //                                     : false
+  //                                 }
+  //                               >
+  //                                 Payment
+  //                               </button>
+  //                             </div>
+  //                           </div>
+  //                         </div>{" "}
+  //                       </div>
+  //                     );
+  //                   }
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         });
+  //       })}
+  //   }
+  // })
+
   function renderButton() {
     return (
       <div className="orderbutton">
         <button
           className="additemcartbutton"
           type="submit"
+          // disabled={true}
           onClick={() => {
             console.log("pressed", emptyQuantity);
             if (tablenumber == null) {

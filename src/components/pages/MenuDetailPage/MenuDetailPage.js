@@ -495,7 +495,7 @@ function MenuDetailPage() {
       setTimeout(() => {
         setAddItemNotif(false);
         setQuantityItemNotif(false);
-      }, 3000); //wait 5 seconds
+      }, 3000); 
     }
   }
 
@@ -506,7 +506,7 @@ function MenuDetailPage() {
   //     setQuantityItemNotif(true);
   //     setTimeout(() => {
   //       setQuantityItemNotif(false);
-  //     }, 3000); //wait 5 seconds
+  //     }, 3000); 
   //   }
   // }
 

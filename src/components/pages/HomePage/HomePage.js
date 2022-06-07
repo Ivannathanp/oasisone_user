@@ -15,9 +15,6 @@ import {
   faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import SearchBar from "./searchbar/Searchbar";
-import Promo from "./Promo/Promo";
-import Recommended from "./Recommend/Recommend";
-import Menu from "./Menu/Menu";
 import { SocketContext } from "../../socketContext";
 import { ThreeDots } from "react-loader-spinner";
 import Categories from "./Categories/Categories";

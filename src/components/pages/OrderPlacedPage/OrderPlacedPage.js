@@ -15,11 +15,47 @@ function OrderPlacedPage() {
   const location = useLocation();
   let { tenant_id } = useParams();
   const myparam = location.state || {};
-  console.log(myparam);
+  const [color, setColor] = useState();
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+  const tenantUrl = process.env.REACT_APP_TENANTURL;
+
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant_id != undefined) {
+        const url = tenantUrl + "/user/" + tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved]);
+
+  useEffect(() => {
+    if (tenantData[0] != undefined) {
+      setColor(tenantData[0].profileColor);
+    }
+  });
 
   function renderHeader() {
     return (
-      <div className="cartheader" >
+      <div className="cartheader" style={{background:color}} >
         <button
           className="backbutton"
           onClick={() => history.push(`/${tenant_id}`)}
@@ -36,8 +72,9 @@ function OrderPlacedPage() {
 
   function renderButton() {
     return (
-      <div className="orderstatuscontainer">
+      <div className="orderstatuscontainer" >
         <div
+        style={{background:color}}
           className="orderstatusbutton"
           onClick={()=>history.push(`/${tenant_id}/Order`)}
         >

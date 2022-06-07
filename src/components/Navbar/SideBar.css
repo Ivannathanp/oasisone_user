@@ -65,7 +65,7 @@
   .side-links:hover{
     align-items: center;
     justify-content: center;
-    background-color: #E52C32;
+    background-color: #c4c4c4;
     border-radius: 100px;
     transition: all 0.2s ease-out;
     box-shadow: none;
@@ -90,8 +90,4 @@
     justify-content: center;
     align-items: center;
     filter: brightness(0) invert(1);
-  }
-  
-  .MuiBadge-colorPrimary{
-    background-color: #E52C32 !important;
   }

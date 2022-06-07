@@ -19,10 +19,6 @@ function OrderPage() {
   const localUrl = process.env.REACT_APP_ORDERURL;
   const [orderData, setOrderData] = useState([]);
   const [orderRetrieved, setOrderRetrieved] = useState(false);
-  const [status, setStatus] = useState(false);
-  const [statusRetrieved, setStatusRetrieved] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(false);
-  const [currentStatusRetrieved, setCurrentStatusRetrieved] = useState(false);
 
   // Get Order Data
   useEffect(() => {
@@ -157,7 +153,7 @@ function OrderPage() {
       tenant_id: tenant_id,
       currentorder: [],
     };
-    if (existingCurrentOrder == null || existingCurrentOrder[0] == null) {
+    if (existingCurrentOrder == null || existingCurrentOrder[0] == null || existingCurrentOrder == undefined) {
       existingCurrentOrder = [];
       existingCurrentOrder.push(currentorder);
       localStorage.setItem(
@@ -186,7 +182,7 @@ function OrderPage() {
       completedorder: [],
     };
 
-    if (existingCompletedOrder == null || existingCompletedOrder[0] == null) {
+    if (existingCompletedOrder == null || existingCompletedOrder[0] == null || existingCompletedOrder==undefined) {
       existingCompletedOrder = [];
       existingCompletedOrder.push(completedorder);
       localStorage.setItem(

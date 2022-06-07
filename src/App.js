@@ -63,7 +63,7 @@ function App() {
 
   useEffect(() => {
     if (tenantID != undefined) {
-      const newSocket = io("ws://oasis-one.com:5000", {
+      const newSocket = io("ws://backend.oasis-one.com", {
         query: {
           tenant_id: tenantID,
         },
@@ -84,7 +84,7 @@ function App() {
   });
 
   return (
-    
+
     <Router>
       <div className="app">
         <SocketContext.Provider value={socket}>

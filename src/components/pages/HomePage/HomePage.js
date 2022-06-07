@@ -51,6 +51,7 @@ function HomePage() {
         const url = localUrl + "/user/" + tenant_id;
         fetch(url, {
           method: "GET",
+          mode: "cors",
           headers: { "content-type": "application/JSON" },
         })
           .then((response) => response.json())
@@ -79,6 +80,7 @@ function HomePage() {
 
         fetch(url, {
           method: "GET",
+          mode: "cors",
           headers: { "content-type": "application/JSON" },
         })
           .then((response) => response.json())
@@ -107,6 +109,7 @@ function HomePage() {
 
         fetch(url, {
           method: "GET",
+          mode:"cors",
           headers: { "content-type": "application/JSON" },
         })
           .then((response) => response.json())
@@ -135,6 +138,7 @@ function HomePage() {
 
         fetch(url, {
           method: "GET",
+          mode:"cors",
           headers: { "content-type": "application/JSON" },
         })
           .then((response) => response.json())
@@ -705,9 +709,16 @@ function HomePage() {
     };
   }, [tenantRetrieved, tenantData]);
 
+  if (menuData[0] == 0){
+    console.log(menuData)
+  }
+
   return (
     <>
-      {tenantRetrieved &&
+      {
+        menuData[0] != 0 && recommendData[0] !=0 && promoData[0] != 0?
+      
+      tenantRetrieved &&
       menuDataRetrieved &&
       recommendRetrieved &&
       promoRetrieved ? (
@@ -1219,7 +1230,131 @@ function HomePage() {
           {" "}
           <ThreeDots color={color} height={80} width={80} />
         </div>
-      )}
+      ) : ( <div className="homepageinnercontainer">
+      <div className="homepageuppercontainer" style={{ background: color }}>
+        <div className="homepagerow">
+          <div className="logocolumn">
+            <img src={profileImage} className="logoimage" />
+            {/* <img src={profileImage + "?time" + new Date()} className="logoimage" /> */}
+          </div>
+
+          <div className="headercolumn">
+            <div className="homepagetitle">{profileName}</div>
+
+            <div className="body">
+              <span>
+                <FontAwesomeIcon
+                  icon={faLocationDot}
+                  className="locationicon"
+                />{" "}
+                &nbsp;{textLocation}
+                <br />
+                {textAddress}
+              </span>
+            </div>
+
+            <div className="homepagerow">
+              <div className="headerbuttoncontainer">
+                <button
+                  className="homepageheaderbutton"
+                  onClick={() => setOpen(true)}
+                >
+                  <div className="homepageheaderbuttontext">Info</div>
+                </button>
+
+                <Modal open={open}>
+                  <Box className="openingtimemodal">
+                    <div style={{ position: "relative" }}>
+                      <div className="modaltitle">Opening Hours</div>
+
+                      {tenantRetrieved == true &&
+                        restaurants.map((post, index) => {
+                          var numberdayweek = [7, 1, 2, 3, 4, 5, 6];
+                          const today = new Date();
+
+                          return (
+                            <div className="modalinnercontainer">
+                              <div className="modalrow">
+                                <div
+                                  className={
+                                    numberdayweek[today.getDay()] ===
+                                    index + 1
+                                      ? "righttextactive"
+                                      : "righttext"
+                                  }
+                                >
+                                  {post.day}
+                                </div>
+                                <div
+                                  className={
+                                    numberdayweek[today.getDay()] ===
+                                    index + 1
+                                      ? "lefttextactive"
+                                      : "lefttext"
+                                  }
+                                >
+                                  {post.is24Hours ? (
+                                    "open 24 hours"
+                                  ) : post.isClosed ? (
+                                    "closed"
+                                  ) : (
+                                    <div>
+                                      {post.OpenHour}:{post.OpenMins}&nbsp;
+                                      {post.OpenTF} - {post.CloseHour}:
+                                      {post.CloseMins}&nbsp;{post.CloseTF}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              {index != 6 ? (
+                                <div className="modalline" />
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                    </div>
+
+                    <button
+                      className="modalbutton"
+                      type="button"
+                      onClick={() => setOpen(false)}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </Box>
+                </Modal>
+
+                <button
+                  className="homepageheaderbutton"
+                  onClick={redirectcallwaiter}
+                >
+                  <div className="homepageheaderbuttontext">
+                    Call the Waiter
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="homepageoverlay"></div>
+
+      <div className="outermaincontainer">
+        <div className="scrollcontainer" id="containerElement">
+          <div className="maincontainer">
+           
+            <div className="emptycontainer2" style={{color:color}}>
+         
+                Coming Soon!
+
+           
+           
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>)}
     </>
   );
 }

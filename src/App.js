@@ -63,7 +63,7 @@ function App() {
 
   useEffect(() => {
     if (tenantID != undefined) {
-      const newSocket = io("ws://backend.oasis-one.com", {
+      const newSocket = io("https://backend.oasis-one.com", {transports: ['polling']}, {
         query: {
           tenant_id: tenantID,
         },

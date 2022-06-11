@@ -63,7 +63,7 @@ function App() {
 
   useEffect(() => {
     if (tenantID != undefined) {
-      const newSocket = io("https://backend.oasis-one.com", {transports: ['polling']}, {
+      const newSocket = io("https://oasisoneserver.herokuapp.com/", {transports: ['polling']}, {
         query: {
           tenant_id: tenantID,
         },
@@ -85,7 +85,7 @@ function App() {
 
   return (
 
-    <Router>
+    <Router basename="/oasisone_user">
       <div className="app">
         <SocketContext.Provider value={socket}>
           <Switch>

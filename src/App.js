@@ -63,7 +63,7 @@ function App() {
 
   useEffect(() => {
     if (tenantID != undefined) {
-      const newSocket = io("https://oasisoneserver.herokuapp.com/", {transports: ['polling']}, {
+      const newSocket = io("http://localhost:5000.com/", {transports: ['polling']}, {
         query: {
           tenant_id: tenantID,
         },

@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/oasisone_user/static/css/main.d00ec31a.css",
+    "main.js": "/oasisone_user/static/js/main.6d3ffa6a.js",
+    "static/media/OrderPlaced.png": "/oasisone_user/static/media/OrderPlaced.eb7d6ecf9a9b0cde4e68.png",
+    "static/media/Ovo.png": "/oasisone_user/static/media/Ovo.6725fb6a06bd09610fee.png",
+    "static/media/EmptyCart.svg": "/oasisone_user/static/media/EmptyCart.041cc9b02b0c16d1cd5e2a73efff189b.svg",
+    "static/media/Shopee.png": "/oasisone_user/static/media/Shopee.431aabbaa8f5f4457662.png",
+    "static/media/Dana.png": "/oasisone_user/static/media/Dana.cacaaf18d1a55d0290b9.png",
+    "static/media/OfflinePaymentActive.svg": "/oasisone_user/static/media/OfflinePaymentActive.e2a5cd4401ef5d5c1e2f6fae18dfbe22.svg",
+    "static/media/OfflinePayment.svg": "/oasisone_user/static/media/OfflinePayment.cf57da7c26afdb31a32d1e95e8056d0d.svg",
+    "static/media/OnlinePayment.svg": "/oasisone_user/static/media/OnlinePayment.70364d8e693b795570d445992afe6574.svg",
+    "static/media/OnlinePaymentActive.svg": "/oasisone_user/static/media/OnlinePaymentActive.9b531a889e909a0e5993890ae7abb48a.svg",
+    "static/media/Cart.svg": "/oasisone_user/static/media/Cart.90f9b2a6fc85fb963de5f2054474eb95.svg",
+    "static/media/Menu.svg": "/oasisone_user/static/media/Menu.7ec581081aa136ad73896b261bced8d1.svg",
+    "index.html": "/oasisone_user/index.html",
+    "main.d00ec31a.css.map": "/oasisone_user/static/css/main.d00ec31a.css.map",
+    "main.6d3ffa6a.js.map": "/oasisone_user/static/js/main.6d3ffa6a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d00ec31a.css",
+    "static/js/main.6d3ffa6a.js"
+  ]
+}

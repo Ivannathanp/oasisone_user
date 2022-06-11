@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/oasisone_user/static/css/main.d00ec31a.css",
-    "main.js": "/oasisone_user/static/js/main.36900f8a.js",
+    "main.js": "/oasisone_user/static/js/main.6aa042fe.js",
     "static/media/OrderPlaced.png": "/oasisone_user/static/media/OrderPlaced.eb7d6ecf9a9b0cde4e68.png",
     "static/media/Ovo.png": "/oasisone_user/static/media/Ovo.6725fb6a06bd09610fee.png",
     "static/media/EmptyCart.svg": "/oasisone_user/static/media/EmptyCart.041cc9b02b0c16d1cd5e2a73efff189b.svg",
@@ -15,10 +15,10 @@
     "static/media/Menu.svg": "/oasisone_user/static/media/Menu.7ec581081aa136ad73896b261bced8d1.svg",
     "index.html": "/oasisone_user/index.html",
     "main.d00ec31a.css.map": "/oasisone_user/static/css/main.d00ec31a.css.map",
-    "main.36900f8a.js.map": "/oasisone_user/static/js/main.36900f8a.js.map"
+    "main.6aa042fe.js.map": "/oasisone_user/static/js/main.6aa042fe.js.map"
   },
   "entrypoints": [
     "static/css/main.d00ec31a.css",
-    "static/js/main.36900f8a.js"
+    "static/js/main.6aa042fe.js"
   ]
 }

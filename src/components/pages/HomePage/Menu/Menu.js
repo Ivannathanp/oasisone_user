@@ -21,8 +21,12 @@ function Menu() {
 
   let { tenant_id } = useParams();
   const localUrl = process.env.REACT_APP_MENUURL;
+  const tenantUrl = process.env.REACT_APP_TENANTURL;
   const [menuData, setMenuData] = useState([]);
   const [menuDataRetrieved, setMenuDataRetrieved] = useState(false);
+  const [color, setColor] = useState();
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
 
   // Get Menu Data
   useEffect(() => {
@@ -52,6 +56,33 @@ function Menu() {
     };
   }, [menuDataRetrieved]);
 
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant_id != undefined) {
+        const url = tenantUrl + "/user/" + tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved]);
+
   // socket connection
   const socket = useContext(SocketContext);
 
@@ -61,21 +92,17 @@ function Menu() {
       socket.on("update category", (data) => handleCategoryAdded(data));
       socket.on("delete category", (data) => handleCategoryAdded(data));
     }
+    if (tenantData[0] != undefined) {
+      setColor(tenantData[0].profileColor);
+    }
   });
 
   function handleCategoryAdded(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", menuData);
-
     if (menuDataRetrieved) {
-      console.log("I am table retrieved!!!!!!!!!!!!!", user);
-
       let newData = menuData.splice();
 
       newData.push(user);
       setMenuData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", menuData);
     }
   }
 
@@ -89,31 +116,23 @@ function Menu() {
   }
 
   async function handleIncrement(i, v, f) {
-    console.log("category is:", i);
-    console.log("menuID is:", v);
-    console.log("increment clicked");
-
-    console.log(item);
     if (item) {
       var menu = {
         menu_id: v,
         order_quantity: 1,
       };
 
-      console.log(item.order);
       if (item.order != undefined) {
         if (item.order.length >= 1) {
-          console.log("layer 1 is called");
           var items = item.order.find((items) => items.menu_id === v);
-          console.log(items);
+
           if (items) {
-            console.log("ITMES IS:", items);
             var newQuantity = items.order_quantity + 1;
             items.order_quantity = newQuantity;
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
 
             setItemval(items.order_quantity);
-            
+
             menuDataRetrieved == true &&
               menuData.map((item) => {
                 return item.map((post, index) => {
@@ -128,12 +147,10 @@ function Menu() {
                     });
                   }
 
-                  console.log(post);
                   setItemval({ post });
                 });
               });
           } else {
-            console.log("layer 2 is called");
             item.order.push(menu);
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
 
@@ -151,7 +168,6 @@ function Menu() {
                     });
                   }
 
-                  console.log(post);
                   setItemval({ post });
                 });
               });
@@ -174,7 +190,6 @@ function Menu() {
                   });
                 }
 
-                console.log(post);
                 setItemval({ post });
               });
             });
@@ -197,7 +212,6 @@ function Menu() {
                 });
               }
 
-              console.log(post);
               setItemval({ post });
             });
           });
@@ -206,17 +220,10 @@ function Menu() {
   }
 
   async function handleDecrement(i, v) {
-    console.log("category is:", i);
-    console.log("menuID is:", v);
-    console.log("decrement clicked");
-
-    console.log(item);
     if (item) {
       if (item.order.length >= 1) {
-        console.log("layer 1 is called");
         var items = item.order.find((items) => items.menu_id === v);
         if (items) {
-          console.log("ITMES IS:", item.order);
           var newQuantity = items.order_quantity - 1;
           items.order_quantity = newQuantity;
           localStorage.setItem("allEntries", JSON.stringify(existingEntries));
@@ -225,11 +232,7 @@ function Menu() {
             var removeIndex = item.order.findIndex(
               (items) => items.menu_id === v
             );
-            console.log(removeIndex);
-            console.log(item.order);
             var newItem = item.order.splice(removeIndex, 1);
-            console.log(newItem);
-            console.log(item.order);
 
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
           }
@@ -248,7 +251,6 @@ function Menu() {
                   });
                 }
 
-                console.log(post);
                 setItemval({ post });
               });
             });
@@ -258,7 +260,6 @@ function Menu() {
   }
 
   function handlepassdata(data) {
-    console.log(data);
     history.push({
       pathname: `/${tenant_id}/MenuDetail`,
       state: data,
@@ -377,7 +378,6 @@ function Menu() {
                         var items = item.order.find(
                           (items) => items.menu_id === posts.id
                         );
-                        console.log("items", item.order);
                       }
 
                       return (
@@ -415,6 +415,13 @@ function Menu() {
 
                           <div className="cartcontainer">
                             <div
+                              style={
+                                items
+                                  ? items.order_quantity > 0
+                                    ? { background: color }
+                                    : null
+                                  : null
+                              }
                               className={
                                 items
                                   ? items.order_quantity > 0
@@ -445,6 +452,13 @@ function Menu() {
                                 }
                               >
                                 <FontAwesomeIcon
+                                  style={
+                                    items
+                                      ? items.order_quantity > 0
+                                        ? { color: color }
+                                        : null
+                                      : null
+                                  }
                                   className={
                                     items
                                       ? items.order_quantity > 0
@@ -484,6 +498,13 @@ function Menu() {
                                 }
                               >
                                 <FontAwesomeIcon
+                                  style={
+                                    items
+                                      ? items.order_quantity > 0
+                                        ? { color: color }
+                                        : null
+                                      : null
+                                  }
                                   className={
                                     items
                                       ? items.order_quantity > 0

@@ -20,7 +20,6 @@ function PromoPage() {
   const location = useLocation();
 
   const myparam = location.state || {};
-  console.log(myparam);
   const localUrl = process.env.REACT_APP_PROMOURL;
   const [promoData, setPromoData] = useState([]);
   const [promoRetrieved, setPromoRetrieved] = useState(false);
@@ -39,7 +38,6 @@ function PromoPage() {
           .then((response) => response.json())
           .then((result) => {
             if (result.status === "SUCCESS") {
-              console.log(result);
               setPromoData([result.data]);
               setPromoRetrieved(() => true);
             } else {

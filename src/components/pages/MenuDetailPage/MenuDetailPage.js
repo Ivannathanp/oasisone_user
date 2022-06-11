@@ -13,17 +13,22 @@ import Carticon from "../../icons/Cart.svg";
 import Recommendicon from "../../icons/Recommend.png";
 import "./MenuDetailPage.css";
 import { SocketContext } from "../../socketContext";
+import { ThreeDots } from "react-loader-spinner";
 
 function MenuDetailPage() {
   const history = useHistory();
   const location = useLocation();
 
   const myparam = location.state || {};
-  console.log(myparam);
   let { tenant_id } = useParams();
   const localUrl = process.env.REACT_APP_MENUURL;
   const [menuData, setMenuData] = useState([]);
   const [menuDataRetrieved, setMenuDataRetrieved] = useState(false);
+  const tenantUrl = process.env.REACT_APP_TENANTURL;
+  const [color, setColor] = useState();
+  const [tenantData, setTenantData] = useState([]);
+  const [tenantRetrieved, setTenantRetrieved] = useState(false);
+
   // Get Menu Data
   useEffect(() => {
     let mounted = true;
@@ -52,32 +57,55 @@ function MenuDetailPage() {
     };
   }, [menuDataRetrieved]);
 
+  // Get Tenant Data
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted) {
+      if (tenant_id != undefined) {
+        const url = tenantUrl + "/user/" + tenant_id;
+        fetch(url, {
+          method: "GET",
+          headers: { "content-type": "application/JSON" },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === "SUCCESS") {
+              setTenantData([result.data]);
+              setTenantRetrieved(() => true);
+            } else {
+              setTenantRetrieved(() => false);
+            }
+          });
+      }
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [tenantRetrieved]);
+
   // socket connection
   const socket = useContext(SocketContext);
 
-  console.log("SOCKET IS", socket);
   useEffect(() => {
     if (socket) {
-      console.log("IAMMMMM CALLLLEDD!!!!!");
       socket.on("add category", (data) => handleCategoryAdded(data));
       socket.on("update category", (data) => handleCategoryAdded(data));
       socket.on("delete category", (data) => handleCategoryAdded(data));
     }
+    if (tenantData[0] != undefined) {
+      setColor(tenantData[0].profileColor);
+    }
   });
 
   function handleCategoryAdded(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", menuData);
 
     if (menuDataRetrieved) {
-      console.log("I am table retrieved!!!!!!!!!!!!!", user);
 
       let newData = menuData.splice();
 
       newData.push(user);
       setMenuData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", menuData);
     }
   }
 
@@ -86,12 +114,12 @@ function MenuDetailPage() {
   var existingEntry = JSON.parse(localStorage.getItem("entry"));
   var existingEntries = JSON.parse(localStorage.getItem("allEntries"));
 
-  useEffect(() => {
-    setInterval(() => {
-      const localStorageValue = JSON.parse(localStorage.getItem("allEntries"));
-      getObjectsList(localStorageValue);
-    }, [10000]);
-  }, []);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     const localStorageValue = JSON.parse(localStorage.getItem("allEntries"));
+  //     getObjectsList(localStorageValue);
+  //   }, [10000]);
+  // }, []);
 
   useEffect(() => {
     if (menuDataRetrieved) {
@@ -105,7 +133,6 @@ function MenuDetailPage() {
     }
   });
 
-  console.log(menuData);
 
   const [itemval, setItemval] = useState();
   const [addItemNotif, setAddItemNotif] = useState(false);
@@ -117,23 +144,15 @@ function MenuDetailPage() {
 
   function renderMenu() {
     async function handleIncrement(i, v, f) {
-      console.log("category is:", i);
-      console.log("menuID is:", v);
-      console.log("increment clicked");
 
-      console.log(item);
       if (item) {
         var menu = {
           menu_id: v,
           order_quantity: 1,
         };
-        console.log(item.order.length);
         if (item.order.length >= 1) {
-          console.log("layer 1 is called");
           var items = item.order.find((items) => items.menu_id === v);
-          console.log(items);
           if (items) {
-            console.log("ITMES IS:", items);
             var newQuantity = items.order_quantity + 1;
             items.order_quantity = newQuantity;
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
@@ -153,12 +172,10 @@ function MenuDetailPage() {
                     });
                   }
 
-                  console.log(post);
                   setItemval({ post });
                 });
               });
           } else {
-            console.log("layer 2 is called");
             item.order.push(menu);
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
 
@@ -176,7 +193,6 @@ function MenuDetailPage() {
                     });
                   }
 
-                  console.log(post);
                   setItemval({ post });
                 });
               });
@@ -199,7 +215,6 @@ function MenuDetailPage() {
                   });
                 }
 
-                console.log(post);
                 setItemval({ post });
               });
             });
@@ -208,16 +223,11 @@ function MenuDetailPage() {
     }
 
     async function handleDecrement(i, v) {
-      console.log("category is:", i);
-      console.log("menuID is:", v);
-      console.log("decrement clicked");
 
       if (item) {
         if (item.order.length >= 1) {
-          console.log("layer 1 is called");
           var items = item.order.find((items) => items.menu_id === v);
           if (items) {
-            console.log("ITMES IS:", item.order);
             var newQuantity = items.order_quantity - 1;
             items.order_quantity = newQuantity;
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
@@ -226,11 +236,7 @@ function MenuDetailPage() {
               var removeIndex = item.order.findIndex(
                 (items) => items.menu_id === v
               );
-              console.log(removeIndex);
-              console.log(item.order);
               var newItem = item.order.splice(removeIndex, 1);
-              console.log(newItem);
-              console.log(item.order);
 
               localStorage.setItem(
                 "allEntries",
@@ -252,7 +258,6 @@ function MenuDetailPage() {
                     });
                   }
 
-                  console.log(post);
                   setItemval({ post });
                 });
               });
@@ -278,151 +283,168 @@ function MenuDetailPage() {
                   localStorage.getItem("allEntries")
                 );
                 if (existingEntries !== null) {
-                  console.log("I am called")
                   var item = existingEntries.find(
                     (item) => item.tenant_id === tenant_id
                   );
-                  console.log(item);
                   if (item) {
                     var noItems = item.order.find(
                       (items) => items.menu_id === posts.id
                     );
                     // if (!noItems) {
-                      console.log(posts.id);
-                      if (posts.id != myparam.id && posts.quantity > 5) {
-                        var existingEntries = JSON.parse(
-                          localStorage.getItem("allEntries")
-                        );
-                        var item = existingEntries.find(
-                          (item) => item.tenant_id === tenant_id
-                        );
+                    if (posts.id != myparam.id && posts.quantity > 5) {
+                      var existingEntries = JSON.parse(
+                        localStorage.getItem("allEntries")
+                      );
+                      var item = existingEntries.find(
+                        (item) => item.tenant_id === tenant_id
+                      );
 
-                        var items = item.order.find(
-                          (items) => items.menu_id === posts.id
-                        );
-                        console.log("items", item.order);
+                      var items = item.order.find(
+                        (items) => items.menu_id === posts.id
+                      );
 
-                        return (
-                          <div className="menuitem" key={posts.id}>
-                            <button
-                              className="menuscreenbutton"
-                              onClick={() => handlepassdata(posts)}
-                            >
-                              <img
-                                src={posts.menuImage}
-                                className="menuitemPhoto"
-                              />
-                            </button>
+                      return (
+                        <div className="menuitem" key={posts.id}>
+                          <button
+                            className="menuscreenbutton"
+                            onClick={() => handlepassdata(posts)}
+                          >
+                            <img
+                              src={posts.menuImage}
+                              className="menuitemPhoto"
+                            />
+                          </button>
 
-                            <div>
-                              <div className="menutext">{posts.name}</div>
-                              {posts.isRecommended == true ? (
-                                <div className="menutext">
-                                  <img src={Recommendicon} />
-                                </div>
-                              ) : (
-                                <div></div>
-                              )}
-
+                          <div>
+                            <div className="menutext">{posts.name}</div>
+                            {posts.isRecommended == true ? (
                               <div className="menutext">
-                                <NumberFormat
-                                  value={posts.price}
-                                  prefix="Rp. "
-                                  decimalSeparator="."
-                                  thousandSeparator=","
-                                  displayType="text"
-                                />
+                                <img src={Recommendicon} />
                               </div>
-                            </div>
+                            ) : (
+                              <div></div>
+                            )}
 
-                            <div className="cartcontainer">
-                              <div
+                            <div className="menutext">
+                              <NumberFormat
+                                value={posts.price}
+                                prefix="Rp. "
+                                decimalSeparator="."
+                                thousandSeparator=","
+                                displayType="text"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="cartcontainer">
+                            <div
+                              style={
+                                items
+                                  ? items.order_quantity > 0
+                                    ? { background: color }
+                                    : null
+                                  : null
+                              }
+                              className={
+                                items
+                                  ? items.order_quantity > 0
+                                    ? "cartactive"
+                                    : "cart"
+                                  : "cart"
+                              }
+                            >
+                              <button
                                 className={
                                   items
                                     ? items.order_quantity > 0
-                                      ? "cartactive"
-                                      : "cart"
-                                    : "cart"
+                                      ? "cartbutton"
+                                      : "cartbuttonactive"
+                                    : "cartbuttonactive"
+                                }
+                                onClick={handleDecrement.bind(
+                                  this,
+                                  post.category.id,
+                                  posts.id
+                                )}
+                                disabled={
+                                  items
+                                    ? items.order_quantity == 0
+                                      ? true
+                                      : false
+                                    : false
                                 }
                               >
-                                <button
+                                <FontAwesomeIcon
+                                  style={
+                                    items
+                                      ? items.order_quantity > 0
+                                        ? { color: color }
+                                        : null
+                                      : null
+                                  }
                                   className={
                                     items
                                       ? items.order_quantity > 0
-                                        ? "cartbutton"
-                                        : "cartbuttonactive"
-                                      : "cartbuttonactive"
-                                  }
-                                  onClick={handleDecrement.bind(
-                                    this,
-                                    post.category.id,
-                                    posts.id
-                                  )}
-                                  disabled={
-                                    items
-                                      ? items.order_quantity == 0
-                                        ? true
-                                        : false
-                                      : false
-                                  }
-                                >
-                                  <FontAwesomeIcon
-                                    className={
-                                      items
-                                        ? items.order_quantity > 0
-                                          ? "cartbuttontext"
-                                          : "disabledcartbuttontext"
+                                        ? "cartbuttontext"
                                         : "disabledcartbuttontext"
-                                    }
-                                    icon={faMinus}
-                                  />
-                                </button>
-
-                                <input
-                                  defaultValue={0}
-                                  type="text"
-                                  value={items ? items.order_quantity : 0}
-                                  className="carttext"
+                                      : "disabledcartbuttontext"
+                                  }
+                                  icon={faMinus}
                                 />
-                                <button
+                              </button>
+
+                              <input
+                                defaultValue={0}
+                                type="text"
+                                value={items ? items.order_quantity : 0}
+                                className="carttext"
+                              />
+                              <button
+                                className={
+                                  items
+                                    ? items.order_quantity > 0
+                                      ? "cartbutton"
+                                      : "cartbuttonactive"
+                                    : "cartbuttonactive"
+                                }
+                                onClick={handleIncrement.bind(
+                                  this,
+                                  post.category.id,
+                                  posts.id
+                                )}
+                                disabled={
+                                  items
+                                    ? items.order_quantity == posts.quantity
+                                      ? true
+                                      : false
+                                    : false
+                                }
+                              >
+                                <FontAwesomeIcon
+                                  style={
+                                    items
+                                      ? items.order_quantity > 0
+                                        ? { color: color }
+                                        : null
+                                      : null
+                                  }
                                   className={
                                     items
                                       ? items.order_quantity > 0
-                                        ? "cartbutton"
-                                        : "cartbuttonactive"
-                                      : "cartbuttonactive"
-                                  }
-                                  onClick={handleIncrement.bind(
-                                    this,
-                                    post.category.id,
-                                    posts.id
-                                  )}
-                                  disabled={
-                                    items
-                                      ? items.order_quantity == posts.quantity
-                                        ? true
-                                        : false
-                                      : false
-                                  }
-                                >
-                                  <FontAwesomeIcon
-                                    className={
-                                      items
-                                        ? items.order_quantity > 0
-                                          ? items.order_quantity == posts.quantity
-                                            ? "disabledcartbuttontext"
-                                            : "cartbuttontext"
-                                          : "disabledcartbuttontext"
+                                        ? items.order_quantity == posts.quantity
+                                          ? "disabledcartbuttontext"
+                                          : "cartbuttontext"
                                         : "disabledcartbuttontext"
-                                    }
-                                    icon={faPlus}
-                                  />
-                                </button>
-                              </div>
+                                      : "disabledcartbuttontext"
+                                  }
+                                  icon={faPlus}
+                                />
+                              </button>
                             </div>
                           </div>
-                        );
-                      } else return null;
+                        </div>
+                      );
+                    } else return null;
                     // }
                   }
                 }
@@ -435,7 +457,7 @@ function MenuDetailPage() {
 
   function renderHeader() {
     return (
-      <div className="header">
+      <div className="header" style={{ background: color }}>
         <button
           className="backbutton"
           onClick={() => history.push(`/${tenant_id}`)}
@@ -452,29 +474,24 @@ function MenuDetailPage() {
 
   async function addItem(i) {
     // Notification
-    handlenotification();
+    setAddItemNotif(true);
+    setTimeout(() => {
+      setAddItemNotif(false);
+    }, 3000);
 
-    console.log("menuID is:", i);
-    console.log("increment clicked");
 
-    console.log(item);
     if (item) {
       var menu = {
         menu_id: i,
         quantity: 1,
       };
-      console.log(item.order.length);
       if (item.order.length >= 1) {
-        console.log("layer 1 is called");
         var items = item.order.find((items) => items.menu_id === i);
-        console.log(items);
         if (items) {
-          console.log("ITMES IS:", items);
           var newQuantity = items.order_quantity + 1;
           items.order_quantity = newQuantity;
           localStorage.setItem("allEntries", JSON.stringify(existingEntries));
         } else {
-          console.log("layer 2 is called");
           item.order.push(menu);
           localStorage.setItem("allEntries", JSON.stringify(existingEntries));
         }
@@ -489,26 +506,8 @@ function MenuDetailPage() {
     if (addItemNotif || quantityItemNotif) {
       setAddItemNotif(false);
       setQuantityItemNotif(false);
-    } else {
-      setAddItemNotif(true);
-      setQuantityItemNotif(true);
-      setTimeout(() => {
-        setAddItemNotif(false);
-        setQuantityItemNotif(false);
-      }, 3000); 
-    }
+    } 
   }
-
-  // function handleQuantityNotification() {
-  //   if (quantityItemNotif) {
-  //     setQuantityItemNotif(false);
-  //   } else {
-  //     setQuantityItemNotif(true);
-  //     setTimeout(() => {
-  //       setQuantityItemNotif(false);
-  //     }, 3000); 
-  //   }
-  // }
 
   function renderButton() {
     var existingEntries = JSON.parse(localStorage.getItem("allEntries"));
@@ -522,23 +521,28 @@ function MenuDetailPage() {
           menuData.map((item) => {
             return item.map((post, index) => {
               return post.category.menu.map((posts, index) => {
-                console.log(posts);
                 if (posts.id === myparam.id) {
                   return (
                     <button
+                      style={{ background: color }}
                       //className={items? items.order_quantity == myparam.quantity? "disabledbuttoncontainer" : "buttoncontainer" : "buttoncontainer"}
                       className="buttoncontainer"
                       onClick={
                         items
-                          ? items.order_quantity == myparam.quantity
-                            ? () => handlenotification()
+                          ? items.order_quantity >= myparam.quantity || myparam.quantity == 0
+                            ? ()=>{
+                                setQuantityItemNotif(true);
+                                  setTimeout(() => {
+                                    setQuantityItemNotif(false);
+                                  }, 3000);
+                              }
                             : () => addItem(myparam.id)
                           : null
                       }
                     >
                       <div className="badgeContainer">
                         <img src={Carticon} className="cartbuttonicon" />
-                        <div className="badgeNumber">
+                        <div className="badgeNumber" style={{ color: color }}>
                           {menuDataRetrieved ? totalQuantity : 0}
                         </div>
                       </div>
@@ -566,113 +570,132 @@ function MenuDetailPage() {
   }
 
   return (
-    <div className="outercontainer">
-      <div className="innercontainer">
-        {renderHeader()}
-        <div className="menudetailbackgroundcontainer">
-          <div className="menudetailbackground">
-            <img src={myparam.menuImage} className="menudetailitemPhoto" />
+    <>
+      {tenantRetrieved ? (
+        <div className="outercontainer">
+          <div className="innercontainer">
+            {renderHeader()}
+            <div className="menudetailbackgroundcontainer">
+              <div className="menudetailbackground">
+                <img src={myparam.menuImage} className="menudetailitemPhoto" />
 
-            <div
-              className={
-                addItemNotif
-                  ? "notification"
-                  : quantityItemNotif
-                  ? "notification"
-                  : "hidden"
-              }
-            >
-              <div className="notificationtextcontainer">
-                <div className="notificationtext">
-                  {quantityItemNotif
-                    ? "Sorry, Menu is empty"
-                    : "Item Added to Cart"}
+                <div
+                  style={{ background: color }}
+                  className={
+                    addItemNotif
+                      ? "notification"
+                      : quantityItemNotif
+                      ? "notification"
+                      : "hidden"
+                  }
+                >
+                  <div className="notificationtextcontainer">
+                    <div className="notificationtext">
+                      {quantityItemNotif
+                        ? "Sorry, Menu is empty"
+                        : "Item Added to Cart"}
+                    </div>
+                  </div>
+
+                  <div className="notificationclose">
+                    <button
+                      className="notifclosebutton"
+                      onClick={handlenotification}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="notificationclose">
-                <button
-                  className="notifclosebutton"
-                  onClick={handlenotification}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
+              <div className="menubackgroundoverlay"></div>
+            </div>
+
+            <div className="menudetailcontainer">
+              <div className="uppercontainer">
+                {menuDataRetrieved == true &&
+                  menuData.map((item) => {
+                    return item.map((post, index) => {
+                      return post.category.menu.map((posts, index) => {
+                        if (posts.id === myparam.id) {
+                          return (
+                            <>
+                              <div className="title">{posts.name}</div>
+                              <div className="price">
+                                <div className="heading3">
+                                  Rp :&nbsp;
+                                  <div className="heading2">
+                                    <NumberFormat
+                                      value={posts.price}
+                                      prefix="Rp "
+                                      decimalSeparator="."
+                                      thousandSeparator=","
+                                      displayType="text"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  {posts.recommended ? (
+                                    <img
+                                      src={Recommendicon}
+                                      className="recommenPhoto"
+                                      resizeMode="contain"
+                                    />
+                                  ) : null}
+                                </div>
+                              </div>
+
+                              <div className="menudetailincontext">
+                                {" "}
+                                <FontAwesomeIcon icon={faClock} />
+                                &nbsp;Cooking Time
+                              </div>
+
+                              <div className="heading3">
+                                {posts.duration} Minutes
+                              </div>
+
+                              <div className="menudetailincontext">
+                                <FontAwesomeIcon icon={faNewspaper} />{" "}
+                                &nbsp;Product Details
+                              </div>
+
+                              <div className="heading3">
+                                {posts.description}
+                              </div>
+                            </>
+                          );
+                        }
+                      });
+                    });
+                  })}
+              </div>
+
+              <div className="lowercontainer">
+                <div className="heading2">Maybe you like this too!</div>
+                <div>&nbsp;</div>
+                {renderMenu()}
               </div>
             </div>
           </div>
-
-          <div className="menubackgroundoverlay"></div>
+          {renderButton()}
         </div>
-
-        <div className="menudetailcontainer">
-          <div className="uppercontainer">
-            {menuDataRetrieved == true &&
-              menuData.map((item) => {
-                return item.map((post, index) => {
-                  return post.category.menu.map((posts, index) => {
-                    console.log(posts);
-                    if (posts.id === myparam.id) {
-                      return (
-                        <>
-                          <div className="title">{posts.name}</div>
-                          <div className="price">
-                            <div className="heading3">
-                              Rp :&nbsp;
-                              <div className="heading2">
-                                <NumberFormat
-                                  value={posts.price}
-                                  prefix="Rp "
-                                  decimalSeparator="."
-                                  thousandSeparator=","
-                                  displayType="text"
-                                />
-                              </div>
-                            </div>
-
-                            <div>
-                              {posts.recommended ? (
-                                <img
-                                  src={Recommendicon}
-                                  className="recommenPhoto"
-                                  resizeMode="contain"
-                                />
-                              ) : null}
-                            </div>
-                          </div>
-
-                          <div className="menudetailincontext">
-                            {" "}
-                            <FontAwesomeIcon icon={faClock} />
-                            &nbsp;Cooking Time
-                          </div>
-
-                          <div className="heading3">
-                            {posts.duration} Minutes
-                          </div>
-
-                          <div className="menudetailincontext">
-                            <FontAwesomeIcon icon={faNewspaper} /> &nbsp;Product
-                            Details
-                          </div>
-
-                          <div className="heading3">{posts.description}</div>
-                        </>
-                      );
-                    }
-                  });
-                });
-              })}
-          </div>
-
-          <div className="lowercontainer">
-            <div className="heading2">Maybe you like this too!</div>
-            <div>&nbsp;</div>
-            {renderMenu()}
-          </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            height: "100vh",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {" "}
+          <ThreeDots color={color} height={80} width={80} />
         </div>
-      </div>
-      {renderButton()}
-    </div>
+      )}
+    </>
   );
 }
 

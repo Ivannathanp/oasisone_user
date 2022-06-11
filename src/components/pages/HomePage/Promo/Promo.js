@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import "./Promo.css";
 import { useParams } from "react-router-dom";
+import { SocketContext } from "../../../socketContext";
 
 function Promo() {
   const history = useHistory();
@@ -25,7 +26,6 @@ function Promo() {
         .then((response) => response.json())
         .then((result) => {
           if ( result.status === 'SUCCESS' ) {
-            console.log(result)
             setPromoData([result.data]); 
             setPromoRetrieved(() => true);
           } else { 
@@ -38,6 +38,29 @@ function Promo() {
     return () => { mounted = false }
   }, [promoRetrieved])
 
+   // socket connection
+   const socket = useContext(SocketContext);
+  
+   useEffect(() => {
+    if (socket) {
+      socket.on('add promo', (data) => handleAddPromo(data));
+      socket.on('update promo', (data) => handleAddPromo(data));
+      socket.on('delete promo', (data) => handleAddPromo(data));
+    }
+  });
+
+  function handleAddPromo(user) {
+
+    if (promoRetrieved) {
+    
+      let newData = promoData.splice();
+ 
+      newData.push(user);
+      setPromoData(newData);
+     
+    }
+  }
+  
   function handlepassdata(data){
     history.push({
       pathname: `/${tenant_id}/PromoDetail`,

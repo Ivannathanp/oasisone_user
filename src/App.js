@@ -41,10 +41,6 @@ function App() {
         : `${online - 1} person is online`;
   }
 
-  console.log(onlineText);
-
-  
-
   useEffect(() => {
     if (existingEntries != null) {
       if (existingEntries.length > 1) {
@@ -52,13 +48,13 @@ function App() {
           if (item.tenant_id === existingEntry.tenant_id) {
             setTenantID(item.tenant_id);
             setTenantRetrieved(() => true);
-            console.log("111111111111111111111111111111111");
+
             return item.tenant_id;
           }
         });
       } else if (existingEntries.length <= 1) {
         setTenantRetrieved(() => true);
-        console.log("22222222222222222222222222222222");
+
         setTenantID(existingEntry.tenant_id);
         return existingEntry.tenant_id;
       }
@@ -66,13 +62,8 @@ function App() {
   });
 
   useEffect(() => {
-   
-     
-    
-    if(tenantID != undefined){
-      console.log("I am called", tenantID);
-
-      const newSocket = io("ws://localhost:5000", {
+    if (tenantID != undefined) {
+      const newSocket = io("https://backend.oasis-one.com", {transports: ['polling']}, {
         query: {
           tenant_id: tenantID,
         },
@@ -81,40 +72,21 @@ function App() {
       setSocketRetrieved(true);
       return () => newSocket.close();
     }
-
- 
-},[tenantRetrieved]);
+  }, [tenantRetrieved]);
 
   useEffect(() => {
-    console.log("tennnattttt:", tenantID);
-
     if (socket && tenantID != undefined) {
       socket.on("visitor enters", (data) => setOnline(data));
       socket.on("visitor exits", (data) => setOnline(data));
-      socket.on("roomUsers", ({ room, users }) => {
-        outputRoomName(room);
-        // outputUsers(users);
-      });
+      
       socket.emit("joinRoom", tenantID);
-      // console.log("I am app socket", socket.emit("joinRoom", getTenantID()));
     }
   });
 
-  if (socketRetrieved) {
-    console.log("app socket is: ", socket);
-  }
-
-  function outputRoomName(room) {
-    console.log("Room is :", room);
-  }
-
-  
-
   return (
-    //basename="/oasisone_tenant"
+
     <Router>
-     
-        <div className="app">
+      <div className="app">
         <SocketContext.Provider value={socket}>
           <Switch>
             <Route
@@ -148,9 +120,8 @@ function App() {
               />
             </div>
           </Switch>
-          </SocketContext.Provider>
-        </div>
-    
+        </SocketContext.Provider>
+      </div>
     </Router>
   );
 }

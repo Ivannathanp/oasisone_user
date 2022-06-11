@@ -255,7 +255,18 @@ overflow: scroll;
   padding-bottom: 20%;
   position: relative;
   }
-
+.emptycontainer2{
+  display: flex;
+  align-items: center;
+justify-content: center;
+  height: 80vh;
+  flex-direction: column;
+  position: relative;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 700;
+  font-size: 25px;
+  line-height: 22px;
+}
 .homepageheading {
  font-family: "Nunito Sans", sans-serif;
   font-weight: 700;

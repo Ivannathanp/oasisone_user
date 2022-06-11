@@ -29,7 +29,7 @@ function CartPage() {
   const history = useHistory();
   let { tenant_id } = useParams();
   const localUrl = process.env.REACT_APP_ORDERURL;
-
+  const [color, setColor] = useState();
   const tenantUrl = process.env.REACT_APP_TENANTURL;
   const [tenantData, setTenantData] = useState([]);
   const [tenantRetrieved, setTenantRetrieved] = useState(false);
@@ -38,7 +38,6 @@ function CartPage() {
     let mounted = true;
 
     if (mounted) {
-      console.log("mounted");
       if (tenant_id != undefined) {
         const url = tenantUrl + "/user/" + tenant_id;
         fetch(url, {
@@ -64,6 +63,7 @@ function CartPage() {
   const menuUrl = process.env.REACT_APP_MENUURL;
   const [menuData, setMenuData] = useState([]);
   const [menuDataRetrieved, setMenuDataRetrieved] = useState(false);
+
   // Get Menu Data
   useEffect(() => {
     let mounted = true;
@@ -143,7 +143,7 @@ function CartPage() {
         const found = existingSubtotal.some(
           (item) => item.tenant_id === tenant_id
         );
-        console.log(found);
+
         if (!found) {
           existingSubtotal.push(subtotal);
           localStorage.setItem("subtotal", JSON.stringify(existingSubtotal));
@@ -151,26 +151,56 @@ function CartPage() {
       }
     }
 
-    var existingOrder = JSON.parse(localStorage.getItem("order"));
-    var order = {
-      tenant_id: tenant_id,      
-      order: [],
+    var existingCurrentOrder = JSON.parse(localStorage.getItem("currentorder"));
+    var currentorder = {
+      tenant_id: tenant_id,
+      currentorder: [],
     };
-    if (existingOrder == null || existingOrder[0] == null) {
-      existingOrder = [];
-      existingOrder.push(order);
-      localStorage.setItem("order", JSON.stringify(existingOrder));
+    if (existingCurrentOrder == null || existingCurrentOrder[0] == null) {
+      existingCurrentOrder = [];
+      existingCurrentOrder.push(currentorder);
+      localStorage.setItem("currentorder", JSON.stringify(existingCurrentOrder));
     }
 
-    if (existingOrder != null) {
-      if (existingOrder.length >= 1) {
-        const found = existingOrder.some(
+    if (existingCurrentOrder != null) {
+      if (existingCurrentOrder.length >= 1) {
+        const found = existingCurrentOrder.some(
           (item) => item.tenant_id === tenant_id
         );
-        console.log(found);
         if (!found) {
-          existingOrder.push(order);
-          localStorage.setItem("order", JSON.stringify(existingOrder));
+          existingCurrentOrder.push(currentorder);
+          localStorage.setItem("currentorder", JSON.stringify(existingCurrentOrder));
+        }
+      }
+    }
+
+    var existingCompletedOrder = JSON.parse(localStorage.getItem("completedorder"));
+    var completedorder = {
+      tenant_id: tenant_id,
+      completedorder: [],
+    };
+
+    if (existingCompletedOrder == null || existingCompletedOrder[0] == null) {
+      existingCompletedOrder = [];
+      existingCompletedOrder.push(completedorder);
+      localStorage.setItem(
+        "completedorder",
+        JSON.stringify(existingCompletedOrder)
+      );
+    }
+
+    if (existingCompletedOrder != null) {
+      if (existingCompletedOrder.length >= 1) {
+        const foundcompletedtenant = existingCompletedOrder.some(
+          (item) => item.tenant_id === tenant_id
+        );
+
+        if (!foundcompletedtenant) {
+          existingCompletedOrder.push(completedorder);
+          localStorage.setItem(
+            "completedorder",
+            JSON.stringify(existingCompletedOrder)
+          );
         }
       }
     }
@@ -178,54 +208,36 @@ function CartPage() {
 
   }, []);
 
-  useEffect(()=>{
-    
-  })
-
   // socket connection
   const socket = useContext(SocketContext);
 
   useEffect(() => {
     if (socket) {
-      socket.on('add order', (data) => console.log(data));
       socket.on("update category", (data) => handleCategoryUpdated(data));
-      socket.on('add table', (data)=>handleTableAdded(data));
-      socket.on('delete table', (data)=>handleTableAdded(data));
-      socket.on('remove table', (data)=>handleTableAdded(data));
-      socket.on('duplicate table', (data)=>handleTableAdded(data));
-      socket.on('add waiter call', (data) => handleTableAdded(data));
-      console.log("I am socket called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      socket.on("add table", (data) => handleTableAdded(data));
+      socket.on("delete table", (data) => handleTableAdded(data));
+      socket.on("remove table", (data) => handleTableAdded(data));
+      socket.on("duplicate table", (data) => handleTableAdded(data));
+      socket.on("add waiter call", (data) => handleTableAdded(data));
+    }
+    if (tenantData[0] != undefined) {
+      setColor(tenantData[0].profileColor);
     }
   });
-  function handleTableAdded(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", tableData);
 
+  function handleTableAdded(user) {
     if (tableRetrieved) {
-      console.log("I am table retrieved!!!!!!!!!!!!!", user)
-    
       let newData = tableData.splice();
- 
+
       newData.push(user);
       setTableData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", tableData)
-     
     }
   }
   function handleCategoryUpdated(user) {
-    console.log("TABLE1", user);
-    console.log(" TABLE original ", menuData);
-
     if (menuDataRetrieved) {
-      console.log("I am table retrieved!!!!!!!!!!!!!", user);
-
       let newData = menuData.splice();
 
       newData.push(user);
-      setMenuData(newData);
-      console.log("NEW DATA IS!!!!!!!!!: ", newData);
-      console.log("...user is", menuData);
     }
   }
 
@@ -240,27 +252,19 @@ function CartPage() {
   var existingEntry = JSON.parse(localStorage.getItem("entry"));
   var existingEntries = JSON.parse(localStorage.getItem("allEntries"));
 
-  useEffect(()=>{
+  useEffect(() => {
     var existingUser = JSON.parse(localStorage.getItem("user"));
 
-    console.log("AAAAAAAAAAAAAAAAAAAAAAA layer1", existingUser)
-      if(existingUser == null){
-        console.log("layer1")
+    if (existingUser == null) {
+      setuserid("null");
+    } else if (existingUser != null) {
+      if (existingUser[0].user_id != null) {
+        setuserid(existingUser[0].user_id);
+      } else if (!item) {
         setuserid("null");
-      } else if (existingUser != null) {
-        console.log("layer2")
-        if(existingUser[0].user_id != null){
-          console.log("item layer 1")
-          setuserid(existingUser[0].user_id)
-        } else if (!item) {
-          console.log("item layer 2")
-          setuserid("null");
-        }
-        
       }
-    
-   
-  })
+    }
+  });
 
   // useEffect(() => {
   //   setInterval(() => {
@@ -277,25 +281,21 @@ function CartPage() {
           return item.map((post, index) => {
             return post.category.menu.map((posts, index) => {
               if (posts.quantity != 0) {
-                console.log("0000000000000000000000000000000000000000000000");
                 var existingEntries = JSON.parse(
                   localStorage.getItem("allEntries")
                 );
-               
-                if (existingEntries != null || existingEntries[0] != null)
-                {
+
+                if (existingEntries != null || existingEntries[0] != null) {
                   var item = existingEntries.find(
                     (item) => item.tenant_id === tenant_id
                   );
-                  if(item){
+                  if (item) {
                     var items = item.order.find(
                       (items) => items.menu_id == posts.id
                     );
                     if (items != undefined) {
-                      console.log(items);
                       totalItem.push(items);
                     }
-                    console.log(totalItem);
 
                     var sum = totalItem.reduce((accumulator, object) => {
                       return accumulator + object.order_quantity;
@@ -303,17 +303,11 @@ function CartPage() {
                     setTotalQuantity(sum);
                   }
                 }
-               
-
-               
-
-                
 
                 var existingSubtotal = JSON.parse(
                   localStorage.getItem("subtotal")
                 );
 
-                console.log(existingSubtotal);
                 if (existingSubtotal.length > 1) {
                   var totalitem = existingSubtotal.find(
                     (item) => item.tenant_id === tenant_id
@@ -321,24 +315,20 @@ function CartPage() {
                 } else if (existingSubtotal.length == 1) {
                   var totalitem = existingSubtotal[0];
                 }
-                console.log(item);
-                console.log(totalItem);
-                console.log(totalitem);
+
                 if (items) {
-                  console.log(items);
                   var subtotal = {
                     menu_id: posts.id,
                     order_quantity: items.order_quantity,
                     price: posts.price,
                   };
-                  console.log(totalitem.order);
+
                   if (totalitem.order.length >= 1) {
                     var removeIndex = totalitem.order.findIndex(
                       (items) => items.menu_id === posts.id
                     );
-                    console.log(removeIndex);
+
                     if (removeIndex != -1) {
-                      console.log("layer 1 is called");
                       totalitem.order.splice(removeIndex, 1);
                       totalitem.order.push(subtotal);
 
@@ -347,7 +337,6 @@ function CartPage() {
                         JSON.stringify(existingSubtotal)
                       );
                     } else {
-                      console.log("layer 2 is called");
                       totalitem.order.push(subtotal);
 
                       localStorage.setItem(
@@ -356,7 +345,6 @@ function CartPage() {
                       );
                     }
                   } else if (totalitem.order.length == 0) {
-                    console.log("layer 3 is called");
                     totalitem.order.push(subtotal);
 
                     localStorage.setItem(
@@ -370,60 +358,40 @@ function CartPage() {
                   localStorage.getItem("allEntries")
                 );
 
-                if (existingEntries != null || existingEntries[0] != null){
+                if (existingEntries != null || existingEntries[0] != null) {
                   var item = existingEntries.find(
                     (item) => item.tenant_id === tenant_id
                   );
 
-                  if(item){
+                  if (item) {
                     var items = item.order.find(
                       (items) => items.menu_id == posts.id
                     );
-    
-                    if (items != undefined) {
-                      console.log(items);
                   }
-                }
-               
-               
 
                   var existingSubtotal = JSON.parse(
                     localStorage.getItem("subtotal")
                   );
-                  console.log(existingSubtotal);
+
                   if (existingSubtotal.length > 1) {
                     var totalitem = existingSubtotal.find(
                       (item) => item.tenant_id === tenant_id
                     );
                   } else if (existingSubtotal.length == 1) {
                     var totalitem = existingSubtotal[0];
+                    console.log(totalitem)
                   }
-                  console.log(
-                    "sold out is I AM HGERRRRR!!!!!!!!!!!!!!!!!!!!!",
-                    posts
-                  );
-                  console.log(totalitem);
-
-                  //                   var subtotal = {
-                  //                     menu_id: posts.id,
-                  //                     order_quantity: items.order_quantity,
-                  //                     price: posts.price,
-                  //                   };
-                  //                   console.log(totalItem)
-                  //                   console.log(totalitem.order);
+                  console.log(totalitem)
+                  console.log(totalitem.order)
+console.log(totalitem.order.length)
                   if (totalitem.order.length > 1) {
-                    console.log("layer 1 is called");
                     var removeEmptyIndex = totalitem.order.findIndex(
                       (items) => items.menu_id === posts.id
                     );
-                    console.log(
-                      "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-                      removeEmptyIndex
-                    );
-                    console.log("Layer1");
+
                     if (removeEmptyIndex != -1) {
                       totalitem.order.splice(removeEmptyIndex, 1);
-                      console.log(totalitem);
+
                       existingSubtotal.splice();
 
                       localStorage.setItem(
@@ -444,7 +412,7 @@ function CartPage() {
   // Total Price
   useEffect(() => {
     var existingSubtotal = JSON.parse(localStorage.getItem("subtotal"));
-    console.log(existingSubtotal);
+
     if (existingSubtotal.length > 1) {
       var totalitem = existingSubtotal.find(
         (item) => item.tenant_id === tenant_id
@@ -453,16 +421,14 @@ function CartPage() {
       var totalitem = existingSubtotal[0];
     }
 
-    console.log(totalitem)
     if (totalitem) {
-      
       var sumPrice = totalitem.order.reduce((accumulator, object) => {
-        var stin = object.price.replace(/,/g, '')
-        console.log(stin)
+        var stin = object.price.replace(/,/g, "");
+
         return accumulator + object.order_quantity * stin;
       }, 0);
       setTotalPrice(sumPrice);
-      console.log(sumPrice);
+
       if (tenantRetrieved) {
         setTotalTax((tenantData[0].taxCharge / 100) * totalPrice);
         setTotalService((tenantData[0].serviceCharge / 100) * totalPrice);
@@ -496,6 +462,7 @@ function CartPage() {
   const iconComponent = (props) => {
     return (
       <ExpandMoreRoundedIcon
+        style={{ background: color }}
         className={props.className + " " + outlineSelectClasses.icon}
       />
     );
@@ -507,19 +474,11 @@ function CartPage() {
   }
 
   async function handleIncrement(i, v, f) {
-    console.log("category is:", i);
-    console.log("menuID is:", v);
-    console.log("increment clicked");
-
-    console.log(item);
     if (item) {
-      console.log(item.order.length);
       if (item.order.length >= 1) {
-        console.log("layer 1 is called");
         var items = item.order.find((items) => items.menu_id === v);
-        console.log(items);
+
         if (items) {
-          console.log("ITMES IS:", items);
           var newQuantity = items.order_quantity + 1;
           items.order_quantity = newQuantity;
           localStorage.setItem("allEntries", JSON.stringify(existingEntries));
@@ -539,7 +498,6 @@ function CartPage() {
                   });
                 }
 
-                console.log(post);
                 setItemval({ post });
               });
             });
@@ -549,29 +507,17 @@ function CartPage() {
   }
 
   async function handleDecrement(i, v) {
-    console.log("category is:", i);
-    console.log("menuID is:", v);
-    console.log("decrement clicked");
-
-    
-    console.log(item);
     if (item) {
       if (item.order.length >= 1) {
-        console.log("layer 1 is called");
         var items = item.order.find((items) => items.menu_id === v);
         if (items) {
-          console.log("ITMES IS:", item.order);
           var newQuantity = items.order_quantity - 1;
           items.order_quantity = newQuantity;
           localStorage.setItem("allEntries", JSON.stringify(existingEntries));
 
           if (items.order_quantity <= 0) {
+            var existingSubtotal = JSON.parse(localStorage.getItem("subtotal"));
 
-            var existingSubtotal = JSON.parse(
-              localStorage.getItem("subtotal")
-            );
-
-            console.log(existingSubtotal);
             if (existingSubtotal.length > 1) {
               var totalitem = existingSubtotal.find(
                 (item) => item.tenant_id === tenant_id
@@ -583,11 +529,9 @@ function CartPage() {
             var removeTotalIndex = totalitem.order.findIndex(
               (items) => items.menu_id === v
             );
-            console.log(removeTotalIndex);
+
             if (removeTotalIndex != -1) {
-              console.log("layer 1 is called");
               totalitem.order.splice(removeTotalIndex, 1);
-   
 
               localStorage.setItem(
                 "subtotal",
@@ -598,11 +542,8 @@ function CartPage() {
             var removeIndex = item.order.findIndex(
               (items) => items.menu_id === v
             );
-            console.log(removeIndex);
-            console.log(item.order);
+
             var newItem = item.order.splice(removeIndex, 1);
-            console.log(newItem);
-            console.log(item.order);
 
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
           }
@@ -621,7 +562,6 @@ function CartPage() {
                   });
                 }
 
-                console.log(post);
                 setItemval({ post });
               });
             });
@@ -631,7 +571,6 @@ function CartPage() {
   }
 
   function handlepassdata(data) {
-    console.log(data);
     history.push({
       pathname: `/${tenant_id}/MenuDetail`,
       state: data,
@@ -640,7 +579,7 @@ function CartPage() {
 
   function renderHeader() {
     return (
-      <div className="cartrenderheader" >
+      <div className="cartrenderheader" style={{ background: color }}>
         <button
           className="backbutton"
           onClick={() => history.push(`/${tenant_id}`)}
@@ -657,7 +596,7 @@ function CartPage() {
 
   function renderEmptyHeader() {
     return (
-      <div className="cartheader" >
+      <div className="cartheader" style={{ background: color }}>
         <button
           className="backbutton"
           onClick={() => history.push(`/${tenant_id}`)}
@@ -682,16 +621,13 @@ function CartPage() {
       }, 3000); //wait 5 seconds
     }
   }
-console.log(userid)
 
   async function createOrder(values, setSubmitting) {
-
     var existingEntries = JSON.parse(localStorage.getItem("allEntries"));
     var existingSubtotal = JSON.parse(localStorage.getItem("subtotal"));
 
+    const url = localUrl + "/create/" + tenant_id;
 
-      const url = localUrl + "/create/" + tenant_id;
-console.log("user id", userid)
     const payload = JSON.stringify({
       user_id: userid,
       order_table: tablenumber,
@@ -706,9 +642,7 @@ console.log("user id", userid)
       user_guest: numberofpeople,
     });
 
-    console.log("Payload is:", payload);
     if (!emptyQuantityNotif) {
-      console.log("I AM OKAY!");
       fetch(url, {
         method: "POST",
         body: payload,
@@ -717,9 +651,8 @@ console.log("user id", userid)
         .then((response) => response.json())
         .then((result) => {
           if (result.status === "SUCCESS") {
-            console.log(result.data[0])
             socket.emit("add order", result.data);
-            
+
             var removeOrder = existingEntries.findIndex(
               (item) => item.tenant_id === tenant_id
             );
@@ -729,54 +662,34 @@ console.log("user id", userid)
             localStorage.setItem("allEntries", JSON.stringify(existingEntries));
             localStorage.setItem("subtotal", JSON.stringify(existingSubtotal));
 
-
-
-            var existingOrder = JSON.parse(
-              localStorage.getItem("order")
-            );
-            var orderItem = existingOrder.find(
+            var existingCurrentOrder = JSON.parse(localStorage.getItem("currentorder"));
+            var orderItem = existingCurrentOrder.find(
               (item) => item.tenant_id === tenant_id
             );
-            console.log(result.data);
-           console.log(result.data[0].order_id);
-           var orderID = {
-             order_id : result.data[0].order_id
-           }
-            orderItem.order.push(orderID);
-            
-            
 
-                  localStorage.setItem(
-                    "order",
-                    JSON.stringify(existingOrder)
-                  );
-               
+            var orderID = {
+              order_id: result.data[0].order_id,
+            };
+            orderItem.currentorder.push(orderID);
 
-    var existingUser = JSON.parse(localStorage.getItem("user"));
-    var user = {
-      user_id: result.data[0].user_id,
-  };
+            localStorage.setItem("currentorder", JSON.stringify(existingCurrentOrder));
 
-   
-      existingUser = [];
-      existingUser.push(user);
-      localStorage.setItem("user", JSON.stringify(existingUser));
-   
+            var existingUser = JSON.parse(localStorage.getItem("user"));
+            var user = {
+              user_id: result.data[0].user_id,
+            };
 
-
+            existingUser = [];
+            existingUser.push(user);
+            localStorage.setItem("user", JSON.stringify(existingUser));
 
             history.push({
               pathname: `/${tenant_id}/OrderPlaced`,
               state: result.data[0],
             });
-          
-          } else {
-            console.log(result.data);
           }
           setSubmitting(false);
         });
-    } else {
-      console.log("I am empty")
     }
   }
 
@@ -785,12 +698,9 @@ console.log("user id", userid)
   //   if(orderRetrieved){
   //     {orderRetrieved == true &&
   //       orderData.map((item) => {
-  //         console.log(item);
   //         return item.map((post, index) => {
-  //           console.log(post);
 
   //           if (existingOrder != null) {
-  //             console.log(existingOrder);
 
   //             if (existingOrder.length > 1) {
   //               var order = existingOrder.find(
@@ -801,13 +711,11 @@ console.log("user id", userid)
   //             }
 
   //             if (order && tenantRetrieved) {
-  //               console.log(order);
   //               if (order.order.length >= 1) {
   //                 if (post.order_status < 4) {
   //                   const found = order.order.some(
   //                     (item) => item.order_id === post.order_id
   //                   );
-  //                   console.log("found1", found);
   //                   if (!found) {
   //                     return (
   //                       <div className="noneorder">
@@ -885,11 +793,10 @@ console.log("user id", userid)
   //                                 Time :&nbsp;{" "}
   //                                 {/* {orderDate.toLocaleTimeString("en-US")} */}
   //                                 {moment(post.order_time).format("MMMM Do YYYY, h:mm:ss a")}
-                              
+
   //                               </div>
   //                             </div>
   //                             {post.order_menu.map((posts, index) => {
-  //                               console.log(posts);
 
   //                               return (
   //                                 <div className="row3">
@@ -1024,11 +931,11 @@ console.log("user id", userid)
     return (
       <div className="orderbutton">
         <button
+          style={{ background: color }}
           className="additemcartbutton"
           type="submit"
           // disabled={true}
           onClick={() => {
-            console.log("pressed", emptyQuantity);
             if (tablenumber == null) {
               setError(true);
             }
@@ -1068,7 +975,7 @@ console.log("user id", userid)
               displayType="text"
             />
             &nbsp;| Confirm Order&nbsp;
-            <div className="orderbuttontexticon">
+            <div className="orderbuttontexticon" style={{ color: color }}>
               <FontAwesomeIcon icon={faChevronRight} />
             </div>
           </div>
@@ -1078,482 +985,568 @@ console.log("user id", userid)
   }
 
   function handleDeleteMenu(v) {
-    console.log(v);
     var removeIndex = item.order.findIndex((items) => items.menu_id === v);
-    console.log(removeIndex);
-    console.log(item.order);
+
     var newItem = item.order.splice(removeIndex, 1);
-    console.log(newItem);
-    console.log(item.order);
 
     localStorage.setItem("allEntries", JSON.stringify(existingEntries));
   }
 
-  console.log(emptyQuantity);
-
   return (
     <>
-      {menuDataRetrieved && item?  item.order.length > 0 ? (
-        <div className="outercontainer">
-          <div className="cartinnercontainer">
-            {renderHeader()}
-            <div className={emptyQuantityNotif ? "cartnotification" : "hidden"}>
-              <div className="notificationtextcontainer">
-                <div className="cartnotificationtext">
-                  Please remove empty items
-                </div>
-              </div>
-
-              <div className="notificationclose">
-                <button
-                  className="cartnotifclosebutton"
-                  onClick={handlenotification}
+      {menuDataRetrieved == true && item ? (
+        item.order.length > 0 ? (
+          <div className="outercontainer">
+            {tenantRetrieved == true ? (
+              <div className="cartinnercontainer" style={{ background: color }}>
+                {renderHeader()}
+                <div
+                  style={{ background: color }}
+                  className={emptyQuantityNotif ? "cartnotification" : "hidden"}
                 >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </div>
-            </div>
+                  <div className="notificationtextcontainer">
+                    <div className="cartnotificationtext">
+                      Please remove empty items
+                    </div>
+                  </div>
 
-            <div className="backgroundcontainer">
-              <div className="column">
-                <div className="headingr">Items :</div>
-                <div className="headingl">{totalQuantity}</div>
-              </div>
-              <div className="line"></div>
-              <div className="column">
-                <div className="headingr">Subtotal :</div>
-                <div className="headingl">
-                  <NumberFormat
-                    value={totalPrice}
-                    prefix="Rp. "
-                    decimalSeparator="."
-                    thousandSeparator=","
-                    displayType="text"
-                  />
+                  <div className="notificationclose">
+                    <button
+                      className="cartnotifclosebutton"
+                      onClick={handlenotification}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="line"></div>
-              <div className="column">
-                <div className="headingr">Service Charge :</div>
-                <div className="headingl">
-                  <NumberFormat
-                    value={totalService}
-                    prefix="Rp. "
-                    decimalSeparator="."
-                    thousandSeparator=","
-                    displayType="text"
-                  />
+
+                <div className="backgroundcontainer">
+                  <div className="column">
+                    <div className="headingr">Items :</div>
+                    <div className="headingl">{totalQuantity}</div>
+                  </div>
+                  <div className="line"></div>
+                  <div className="column">
+                    <div className="headingr">Subtotal :</div>
+                    <div className="headingl">
+                      <NumberFormat
+                        value={totalPrice}
+                        prefix="Rp. "
+                        decimalSeparator="."
+                        thousandSeparator=","
+                        displayType="text"
+                      />
+                    </div>
+                  </div>
+                  <div className="line"></div>
+                  <div className="column">
+                    <div className="headingr">Service Charge :</div>
+                    <div className="headingl">
+                      <NumberFormat
+                        value={totalService}
+                        prefix="Rp. "
+                        decimalSeparator="."
+                        thousandSeparator=","
+                        displayType="text"
+                      />
+                    </div>
+                  </div>
+                  <div className="line"></div>
+
+                  <div className="column">
+                    <div className="headingr">Tax(%) : </div>
+                    <div className="headingl">
+                      <NumberFormat
+                        value={totalTax}
+                        prefix="Rp. "
+                        decimalSeparator="."
+                        thousandSeparator=","
+                        displayType="text"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="line"></div>
 
-              <div className="column">
-                <div className="headingr">Tax(%) : </div>
-                <div className="headingl">
-                  <NumberFormat
-                    value={totalTax}
-                    prefix="Rp. "
-                    decimalSeparator="."
-                    thousandSeparator=","
-                    displayType="text"
-                  />
-                </div>
-              </div>
-            </div>
+                <div className="cartbackgroundoverlay"></div>
 
-            <div className="cartbackgroundoverlay"></div>
+                <div className="cartrestaurantcontainer">
+                  <div style={{ height: "100%" }}>
+                    <div className="cartmenucontainer">
+                      {menuData.map((item) => {
+                        return item.map((post, index) => {
+                          return post.category.menu.map((posts, index) => {
+                            var existingEntries = JSON.parse(
+                              localStorage.getItem("allEntries")
+                            );
 
-            <div className="cartrestaurantcontainer">
-              <div style={{ height: "100%" }}>
-                <div className="cartmenucontainer">
-                  {menuData.map((item) => {
-                    return item.map((post, index) => {
-                      return post.category.menu.map((posts, index) => {
-                        var existingEntries = JSON.parse(
-                          localStorage.getItem("allEntries")
-                        );
+                            if (
+                              existingEntries != null ||
+                              existingEntries[0] != null
+                            ) {
+                              var item = existingEntries.find(
+                                (item) => item.tenant_id === tenant_id
+                              );
+                              if (item) {
+                                var items = item.order.find(
+                                  (items) => items.menu_id === posts.id
+                                );
+                              }
+                            }
 
-                        if (existingEntries != null || existingEntries[0] != null)
-                        {
-                          var item = existingEntries.find(
-                            (item) => item.tenant_id === tenant_id
-                          );
-  if(item){
-    var items = item.order.find(
-      (items) => items.menu_id === posts.id
-    );
-    console.log("items", item.order);
-  }
-                          
-                        }
-                       
-
-                        if (items) {
-                          if (posts.quantity == 0) {
-                            return (
-                              <div className="soldoutmenuitem" key={posts.id}>
-                                <img
-                                  src={posts.menuImage}
-                                  className="menuitemPhoto"
-                                />
-
-                                <div>
-                                  <div className="menutext">{posts.name}</div>
-                                  {posts.isRecommended == true ? (
-                                    <div className="menutext">
-                                      <img src={Recommendicon} />
-                                    </div>
-                                  ) : (
-                                    <div></div>
-                                  )}
-
-                                  <div className="soldoutmenutext">
-                                    Sold Out
-                                  </div>
-                                </div>
-
-                                <div className="cartcontainer">
-                                  <button
-                                    className="deletemenubutton"
-                                    onClick={() => handleDeleteMenu(posts.id)}
+                            if (items) {
+                              if (posts.quantity == 0) {
+                                return (
+                                  <div
+                                    className="soldoutmenuitem"
+                                    key={posts.id}
                                   >
-                                    <DeleteOutlineOutlinedIcon className="deleteicon" />
+                                    <img
+                                      src={posts.menuImage}
+                                      className="menuitemPhoto"
+                                    />
+
+                                    <div>
+                                      <div className="menutext">
+                                        {posts.name}
+                                      </div>
+                                      {posts.isRecommended == true ? (
+                                        <div className="menutext">
+                                          <img src={Recommendicon} />
+                                        </div>
+                                      ) : (
+                                        <div></div>
+                                      )}
+
+                                      <div className="soldoutmenutext">
+                                        Sold Out
+                                      </div>
+                                    </div>
+
+                                    <div className="cartcontainer">
+                                      <button
+                                        className="deletemenubutton"
+                                        onClick={() =>
+                                          handleDeleteMenu(posts.id)
+                                        }
+                                      >
+                                        <DeleteOutlineOutlinedIcon className="deleteicon" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              } else {
+                                return (
+                                  <div className="menuitem" key={posts.id}>
+                                    <button
+                                      className="menuscreenbutton"
+                                      onClick={() => handlepassdata(posts)}
+                                    >
+                                      <img
+                                        src={posts.menuImage}
+                                        className="menuitemPhoto"
+                                      />
+                                    </button>
+
+                                    <div>
+                                      <div className="menutext">
+                                        {posts.name}
+                                      </div>
+                                      {posts.isRecommended == true ? (
+                                        <div className="menutext">
+                                          <img src={Recommendicon} />
+                                        </div>
+                                      ) : (
+                                        <div></div>
+                                      )}
+
+                                      <div className="menutext">
+                                        <NumberFormat
+                                          value={posts.price}
+                                          prefix="Rp. "
+                                          decimalSeparator="."
+                                          thousandSeparator=","
+                                          displayType="text"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="cartcontainer">
+                                      <div
+                                        style={
+                                          items
+                                            ? items.order_quantity > 0
+                                              ? { background: color }
+                                              : null
+                                            : null
+                                        }
+                                        className={
+                                          items
+                                            ? items.order_quantity > 0
+                                              ? "cartactive"
+                                              : "cart"
+                                            : "cart"
+                                        }
+                                      >
+                                        <button
+                                          className={
+                                            items
+                                              ? items.order_quantity > 0
+                                                ? "cartbutton"
+                                                : "cartbuttonactive"
+                                              : "cartbuttonactive"
+                                          }
+                                          onClick={handleDecrement.bind(
+                                            this,
+                                            post.category.id,
+                                            posts.id
+                                          )}
+                                          disabled={
+                                            items
+                                              ? items.order_quantity <= 0
+                                                ? true
+                                                : false
+                                              : false
+                                          }
+                                        >
+                                          <FontAwesomeIcon
+                                            style={
+                                              items
+                                                ? items.order_quantity > 0
+                                                  ? { color: color }
+                                                  : null
+                                                : null
+                                            }
+                                            className={
+                                              items
+                                                ? items.order_quantity > 0
+                                                  ? "cartbuttontext"
+                                                  : "disabledcartbuttontext"
+                                                : "disabledcartbuttontext"
+                                            }
+                                            icon={faMinus}
+                                          />
+                                        </button>
+
+                                        <input
+                                          defaultValue={0}
+                                          type="text"
+                                          value={
+                                            items ? items.order_quantity : 0
+                                          }
+                                          className="carttext"
+                                        />
+                                        <button
+                                          className={
+                                            items
+                                              ? items.order_quantity > 0
+                                                ? "cartbutton"
+                                                : "cartbuttonactive"
+                                              : "cartbuttonactive"
+                                          }
+                                          onClick={handleIncrement.bind(
+                                            this,
+                                            post.category.id,
+                                            posts.id,
+                                            posts.price
+                                          )}
+                                          disabled={
+                                            items
+                                              ? items.order_quantity >=
+                                                posts.quantity
+                                                ? true
+                                                : false
+                                              : false
+                                          }
+                                        >
+                                          <FontAwesomeIcon
+                                            style={
+                                              items
+                                                ? items.order_quantity > 0
+                                                  ? { color: color }
+                                                  : null
+                                                : null
+                                            }
+                                            className={
+                                              items
+                                                ? items.order_quantity > 0
+                                                  ? items.order_quantity >=
+                                                    posts.quantity
+                                                    ? "disabledcartbuttontext"
+                                                    : "cartbuttontext"
+                                                  : "disabledcartbuttontext"
+                                                : "disabledcartbuttontext"
+                                            }
+                                            icon={faPlus}
+                                          />
+                                        </button>
+                                      </div>
+                                      <div className="quantitydesc">
+                                        {posts.quantity <= items.order_quantity
+                                          ? "Max qty: " + posts.quantity
+                                          : null}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            }
+                          });
+                        });
+                      })}
+                    </div>
+
+                    <div className="form">
+                      <Formik
+                        initialValues={{
+                          name: "",
+                          phonenumber: "",
+                          specialinstruction: "",
+                          tablenumber: "",
+                          numberofpeople: "1",
+                        }}
+                        validationSchema={Yup.object().shape({
+                          name: Yup.string().required("Required"),
+                          phonenumber: Yup.string()
+                            .required("Required")
+                            .matches(
+                              /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/,
+                              "Phone number is not valid."
+                            ),
+                        })}
+                        onSubmit={(values, { setSubmitting }) => {
+                          createOrder(values, setSubmitting);
+                        }}
+                      >
+                        {({ errors, touched, isSubmitting }) => (
+                          <Form>
+                            <div className="formcontainer">
+                              <div className="forminputs">
+                                <div className="formlabel">
+                                  Name<div className="span">*</div>
+                                </div>
+                                <TextField
+                                  name="name"
+                                  type="text"
+                                  placeholder="Enter Your Name"
+                                />
+                              </div>
+                              <div className="forminputs">
+                                <div className="formlabel">
+                                  Phone Number<div className="span">*</div>
+                                </div>
+                                <TextField
+                                  name="phonenumber"
+                                  type="text"
+                                  placeholder="Enter Your Phone Number"
+                                />
+                              </div>
+                              <div className="forminputs">
+                                <div className="formlabel">
+                                  Special Instructions (optional)
+                                </div>
+                                <TextField
+                                  name="specialinstruction"
+                                  type="text"
+                                  placeholder="E.g No onions, please"
+                                />
+                              </div>
+                              <div className="forminputs">
+                                <div className="formlabel">
+                                  Select Your Table<div className="span">*</div>
+                                </div>
+                                <FormControl error={error}>
+                                  <Select
+                                    defaultValue=""
+                                    disableUnderline
+                                    classes={{
+                                      root: outlineSelectClasses.select,
+                                    }}
+                                    MenuProps={menuProps}
+                                    IconComponent={iconComponent}
+                                    value={tablenumber}
+                                    onChange={(e) => {
+                                      setTableNumber(e.target.value);
+                                      setError(false);
+                                    }}
+                                    displayEmpty
+                                    renderValue={(value) =>
+                                      value.length === 0 ? (
+                                        <div className="placeholder">
+                                          Select Your Table
+                                        </div>
+                                      ) : (
+                                        value
+                                      )
+                                    }
+                                  >
+                                    {tableData.map((post) => {
+                                      return post.map((posts, index) => {
+                                        if (posts.table.status == "EMPTY") {
+                                          return (
+                                            <MenuItem value={posts.table.index}>
+                                              Table {posts.table.index}
+                                            </MenuItem>
+                                          );
+                                        }
+                                      });
+                                    })}
+                                  </Select>
+                                  {error && (
+                                    <FormHelperText className="selecterror">
+                                      Select a value
+                                    </FormHelperText>
+                                  )}
+                                </FormControl>
+                              </div>
+                              <div className="forminputs">
+                                <div className="formlabel">
+                                  Number of People
+                                </div>
+                                <div className="numberofpeople">
+                                  <button
+                                    style={numberofpeople == 1 ? null : { background: color }}
+                                    type="button"
+                                    className={
+                                      numberofpeople == 1
+                                        ? "sbuttonL"
+                                        : "sbuttonactiveL"
+                                    }
+                                    onClick={() => {
+                                      setNumberOfPeople(numberofpeople - 1);
+                                    }}
+                                    disabled={
+                                      numberofpeople == 1 ? true : false
+                                    }
+                                  >
+                                    <FontAwesomeIcon
+                                      className="sbuttontext"
+                                      icon={faMinus}
+                                    />
+                                  </button>
+
+                                  <div className="snumberpeople">
+                                    {numberofpeople}&nbsp;Guest
+                                  </div>
+
+                                  <button
+                                    style={{ background: color }}
+                                    type="button"
+                                    className={
+                                      numberofpeople < 1
+                                        ? "sbuttonR"
+                                        : "sbuttonactiveR"
+                                    }
+                                    onClick={() => {
+                                      setNumberOfPeople(numberofpeople + 1);
+                                    }}
+                                  >
+                                    <FontAwesomeIcon
+                                      className="sbuttontext"
+                                      icon={faPlus}
+                                    />
                                   </button>
                                 </div>
                               </div>
-                            );
-                          } else {
-                            console.log(posts);
-
-                            return (
-                              <div className="menuitem" key={posts.id}>
-                                <button
-                                  className="menuscreenbutton"
-                                  onClick={() => handlepassdata(posts)}
-                                >
-                                  <img
-                                    src={posts.menuImage}
-                                    className="menuitemPhoto"
+                            </div>
+                            {isSubmitting ? (
+                              <div className="orderbutton">
+                                <div className="loading">
+                                  <ThreeDots
+                                    color={color}
+                                    height={80}
+                                    width={80}
                                   />
-                                </button>
-
-                                <div>
-                                  <div className="menutext">{posts.name}</div>
-                                  {posts.isRecommended == true ? (
-                                    <div className="menutext">
-                                      <img src={Recommendicon} />
-                                    </div>
-                                  ) : (
-                                    <div></div>
-                                  )}
-
-                                  <div className="menutext">
-                                    <NumberFormat
-                                      value={posts.price}
-                                      prefix="Rp. "
-                                      decimalSeparator="."
-                                      thousandSeparator=","
-                                      displayType="text"
-                                    />
-                                  </div>
-                                </div>
-
-                                <div className="cartcontainer">
-                                  <div
-                                    className={
-                                      items
-                                        ? items.order_quantity > 0
-                                          ? "cartactive"
-                                          : "cart"
-                                        : "cart"
-                                    }
-                                  >
-                                    <button
-                                      className={
-                                        items
-                                          ? items.order_quantity > 0
-                                            ? "cartbutton"
-                                            : "cartbuttonactive"
-                                          : "cartbuttonactive"
-                                      }
-                                      onClick={handleDecrement.bind(
-                                        this,
-                                        post.category.id,
-                                        posts.id
-                                      )}
-                                      disabled={
-                                        items
-                                          ? items.order_quantity <= 0
-                                            ? true
-                                            : false
-                                          : false
-                                      }
-                                    >
-                                      <FontAwesomeIcon
-                                        className={
-                                          items
-                                            ? items.order_quantity > 0
-                                              ? "cartbuttontext"
-                                              : "disabledcartbuttontext"
-                                            : "disabledcartbuttontext"
-                                        }
-                                        icon={faMinus}
-                                      />
-                                    </button>
-
-                                    <input
-                                      defaultValue={0}
-                                      type="text"
-                                      value={items ? items.order_quantity : 0}
-                                      className="carttext"
-                                    />
-                                    <button
-                                      className={
-                                        items
-                                          ? items.order_quantity > 0
-                                            ? "cartbutton"
-                                            : "cartbuttonactive"
-                                          : "cartbuttonactive"
-                                      }
-                                      onClick={handleIncrement.bind(
-                                        this,
-                                        post.category.id,
-                                        posts.id,
-                                        posts.price
-                                      )}
-                                      disabled={
-                                        items
-                                          ? items.order_quantity >=
-                                            posts.quantity
-                                            ? true
-                                            : false
-                                          : false
-                                      }
-                                    >
-                                      <FontAwesomeIcon
-                                        className={
-                                          items
-                                            ? items.order_quantity > 0
-                                              ? items.order_quantity >=
-                                                posts.quantity
-                                                ? "disabledcartbuttontext"
-                                                : "cartbuttontext"
-                                              : "disabledcartbuttontext"
-                                            : "disabledcartbuttontext"
-                                        }
-                                        icon={faPlus}
-                                      />
-                                    </button>
-                                  </div>
-                                  <div className="quantitydesc">
-                                    {posts.quantity <= items.order_quantity
-                                      ? "Max qty: " + posts.quantity
-                                      : null}
-                                  </div>
                                 </div>
                               </div>
-                            );
-                          }
-                        }
-                      });
-                    });
-                  })}
+                            ) : (
+                              renderButton()
+                            )}
+                          </Form>
+                        )}
+                      </Formik>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {" "}
+                <ThreeDots color={color} height={80} width={80} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="outercontainer">
+            {tenantRetrieved == true ? (
+              <div className="cartinnercontainer">
+                {renderEmptyHeader()}
+                <div className="waiterbackgroundcontainer">
+                  <div className="backgroundoverlay"></div>
                 </div>
 
-                <div className="form">
-                  <Formik
-                    initialValues={{
-                      name: "",
-                      phonenumber: "",
-                      specialinstruction: "",
-                      tablenumber: "",
-                      numberofpeople: "1",
-                    }}
-                    validationSchema={Yup.object().shape({
-                      name: Yup.string().required("Required"),
-                      phonenumber: Yup.string()
-                        .required("Required")
-                        .matches(
-                          /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/,
-                          "Phone number is not valid."
-                        ),
-                    })}
-                    onSubmit={(values, { setSubmitting }) => {
-                      console.log(values);
-                      console.log(tablenumber);
-                      console.log(numberofpeople);
-                      createOrder(values, setSubmitting);
-                    }}
-                  >
-                    {({ errors, touched, isSubmitting }) => (
-                      <Form>
-                        <div className="formcontainer">
-                          <div className="forminputs">
-                            <div className="formlabel">
-                              Name<div className="span">*</div>
-                            </div>
-                            <TextField
-                              name="name"
-                              type="text"
-                              placeholder="Enter Your Name"
-                            />
-                          </div>
-                          <div className="forminputs">
-                            <div className="formlabel">
-                              Phone Number<div className="span">*</div>
-                            </div>
-                            <TextField
-                              name="phonenumber"
-                              type="text"
-                              placeholder="Enter Your Phone Number"
-                            />
-                          </div>
-                          <div className="forminputs">
-                            <div className="formlabel">
-                              Special Instructions (optional)
-                            </div>
-                            <TextField
-                              name="specialinstruction"
-                              type="text"
-                              placeholder="E.g No onions, please"
-                            />
-                          </div>
-                          <div className="forminputs">
-                            <div className="formlabel">
-                              Select Your Table<div className="span">*</div>
-                            </div>
-                            <FormControl error={error}>
-                              <Select
-                                defaultValue=""
-                                disableUnderline
-                                classes={{ root: outlineSelectClasses.select }}
-                                MenuProps={menuProps}
-                                IconComponent={iconComponent}
-                                value={tablenumber}
-                                onChange={(e) => {
-                                  setTableNumber(e.target.value);
-                                  setError(false);
-                                }}
-                                displayEmpty
-                                renderValue={(value) =>
-                                  value.length === 0 ? (
-                                    <div className="placeholder">
-                                      Select Your Table
-                                    </div>
-                                  ) : (
-                                    value
-                                  )
-                                }
-                              >
-                                {tableData.map((post) => {
-                                  return post.map((posts, index) => {
-                                    console.log(posts);
-                                    if (posts.table.status == "EMPTY") {
-                                      return (
-                                        <MenuItem value={posts.table.index}>
-                                          Table {posts.table.index}
-                                        </MenuItem>
-                                      );
-                                    }
-                                  });
-                                })}
-                              </Select>
-                              {error && (
-                                <FormHelperText className="selecterror">
-                                  Select a value
-                                </FormHelperText>
-                              )}
-                            </FormControl>
-                          </div>
-                          <div className="forminputs">
-                            <div className="formlabel">Number of People</div>
-                            <div className="numberofpeople">
-                              <button
-                                type="button"
-                                className={
-                                  numberofpeople == 1
-                                    ? "sbuttonL"
-                                    : "sbuttonactiveL"
-                                }
-                                onClick={() => {
-                                  setNumberOfPeople(numberofpeople - 1);
-                                }}
-                                disabled={numberofpeople == 1 ? true : false}
-                              >
-                                <FontAwesomeIcon
-                                  className="sbuttontext"
-                                  icon={faMinus}
-                                />
-                              </button>
+                <div className="emptycartcontainer">
+                  <div className="centered">
+                    <img src={Cartemptyicon} className="cartemptyicon" />
 
-                              <div className="snumberpeople">
-                                {numberofpeople}&nbsp;Guest
-                              </div>
+                    <div className="emptycart">Your Cart is Empty.</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {" "}
+                <ThreeDots color={color} height={80} width={80} />
+              </div>
+            )}
+          </div>
+        )
+      ) : (
+        <div className="outercontainer">
+          {tenantRetrieved == true ? (
+            <div className="cartinnercontainer">
+              {renderEmptyHeader()}
+              <div className="waiterbackgroundcontainer">
+                <div className="backgroundoverlay"></div>
+              </div>
 
-                              <button
-                                type="button"
-                                className={
-                                  numberofpeople < 1
-                                    ? "sbuttonR"
-                                    : "sbuttonactiveR"
-                                }
-                                onClick={() => {
-                                  setNumberOfPeople(numberofpeople + 1);
-                                }}
-                              >
-                                <FontAwesomeIcon
-                                  className="sbuttontext"
-                                  icon={faPlus}
-                                />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        {isSubmitting? ( <div className="orderbutton"><div className="loading"><ThreeDots color="#f10c0c" height={80} width={80} /></div></div>) 
-: (renderButton())
-                        }
-                 
-                      </Form>
-                    )}
-                  </Formik>
+              <div className="emptycartcontainer">
+                <div className="centered">
+                  <img src={Cartemptyicon} className="cartemptyicon" />
+
+                  <div className="emptycart">Your Cart is Empty.</div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      ) : (
-        <div className="outercontainer">
-          <div className="cartinnercontainer">
-            {renderEmptyHeader()}
-            <div className="waiterbackgroundcontainer">
-              <div className="backgroundoverlay"></div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                height: "100vh",
+                justifyContent: "center",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {" "}
+              <ThreeDots color={color} height={80} width={80} />
             </div>
-
-            <div className="emptycartcontainer">
-              <div className="centered">
-                <img src={Cartemptyicon} className="cartemptyicon" />
-
-                <div className="emptycart">Your Cart is Empty.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="outercontainer">
-          <div className="cartinnercontainer">
-            {renderEmptyHeader()}
-            <div className="waiterbackgroundcontainer">
-              <div className="backgroundoverlay"></div>
-            </div>
-
-            <div className="emptycartcontainer">
-              <div className="centered">
-                <img src={Cartemptyicon} className="cartemptyicon" />
-
-                <div className="emptycart">Your Cart is Empty.</div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </>
